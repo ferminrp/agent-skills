@@ -1,0 +1,112 @@
+---
+name: travel-promos-argentina
+description: >
+  Consulta promociones de viajes desde Argentina usando Anduin Promos API.
+  Usar cuando el usuario pida promos de viaje en Argentina, promociones de vuelos,
+  hoteles o paquetes, mejores ofertas del dia, promos a brasil/usa/europa,
+  ranking por score o ultimas promos de promociones-aereas.
+---
+
+# Travel Promos Argentina
+
+Consulta promociones de viajes (vuelos, hoteles y paquetes) y permite filtrarlas y ordenarlas localmente.
+
+## API Overview
+
+- **Base URL**: `https://anduin.ferminrp.workers.dev`
+- **Auth**: None required
+- **Response format**: JSON
+- **Endpoint principal**: `/api/v1/promos`
+- **Fuente upstream**: `data.source`
+- **Timestamps relevantes**:
+  - `data.lastUpdated` (actualizacion de promos)
+  - `timestamp` (respuesta del servicio)
+- **Nota**: los query params probados (`category`, `destinationCountry`, `limit`, `q`) no filtran en origen; filtrar localmente con `jq`.
+
+## Endpoint
+
+- `GET /api/v1/promos`
+
+Ejemplos de uso:
+
+```bash
+curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.'
+curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos[0:5]'
+curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos | map(select(.category == "vuelos"))'
+curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos | map(select(.destinationCountry == "brazil"))'
+curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos | sort_by(-.score) | .[0:10]'
+```
+
+## Campos clave
+
+- Top-level:
+  - `success` (bool)
+  - `timestamp` (ISO datetime)
+- `data`:
+  - `lastUpdated` (ISO datetime)
+  - `source` (URL de origen)
+  - `totalPromos` (int)
+  - `promos` (array)
+- `promos[]`:
+  - `id`, `date`, `title`, `link`, `permalink`, `thumbnailUrl`
+  - `destinationCountry` (puede ser `null`)
+  - `category`
+  - `score` (numerico para ranking)
+- Valores dinamicos observados hoy (ejemplos, no lista cerrada):
+  - `category`: `vuelos`, `hoteles`, `paquetes`, `otros`
+  - `destinationCountry`: `brazil`, `united_states`, `spain`, `dominican_republic`, `aruba`, `south_africa`, `null`
+
+## Workflow
+
+1. Detectar intencion del usuario:
+   - Listado general
+   - Filtro por categoria o pais
+   - Ranking por score
+   - Ultimas promos
+2. Consultar endpoint unico con `curl -s`.
+3. Validar `success == true` y existencia de `data.promos`.
+4. Aplicar filtros y orden localmente con `jq`:
+   - Por `category`
+   - Por `destinationCountry`
+   - Por `date` o `score`
+5. Responder primero con snapshot:
+   - Cantidad total (`totalPromos`)
+   - `lastUpdated`
+   - Top 3 promos por score o relevancia
+6. Luego mostrar tabla corta (top 5/10):
+   - `date | category | destinationCountry | score | title`
+7. Incluir links (`link` o `permalink`) solo para promos mostradas.
+8. Mantener respuesta informativa, sin consejos financieros ni garantias de disponibilidad.
+
+## Error Handling
+
+- **HTTP no exitoso**:
+  - Informar codigo HTTP y endpoint consultado.
+- **`success: false`**:
+  - Mostrar payload de error si existe.
+- **JSON inesperado**:
+  - Mostrar minimo crudo util y aclarar inconsistencia.
+- **Red o timeout**:
+  - Reintentar hasta 2 veces con espera corta.
+- **`promos` vacio**:
+  - Informar "no hay promociones disponibles actualmente".
+
+## Presenting Results
+
+- Formato por defecto:
+  - Resumen ejecutivo + tabla corta
+- Priorizar:
+  - Recencia (`date`)
+  - Relevancia (`score`)
+  - Claridad de destino y categoria
+- Aclarar timestamps (`lastUpdated` y/o `timestamp`) y la fuente externa (`data.source`).
+- No emitir recomendaciones de compra; solo informar promociones disponibles.
+
+## Out of Scope
+
+Esta skill no debe hacer en v1:
+
+- Scraping directo de sitios externos
+- Automatizacion de reserva o compra
+- Alertas push, notificaciones o tracking de cambios
+- Uso de endpoints distintos de `/api/v1/promos`

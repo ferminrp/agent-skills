@@ -10,6 +10,9 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [data912-market-data](skills/data912-market-data/) | Query Data912 market endpoints for MEP/CCL, live AR/US panels, historical OHLC by ticker, and USA options volatility analytics |
 | [cotizacion-dolar-argentina](skills/cotizacion-dolar-argentina/) | Consulta cotizaciones de dolar y monedas (EUR/BRL/CLP/UYU) en Argentina usando DolarAPI |
 | [crypto-prices-criptoya](skills/crypto-prices-criptoya/) | Consulta cotizaciones cripto por exchange y agregadas, y fees de retiro, usando CriptoYa API |
+| [inflacion-argentina-ipc](skills/inflacion-argentina-ipc/) | Consulta la serie historica y el ultimo dato de IPC/inflacion mensual de Argentina desde Anduin API |
+| [riesgo-pais-argentina](skills/riesgo-pais-argentina/) | Consulta la serie historica y el ultimo dato de riesgo pais de Argentina desde Anduin API |
+| [travel-promos-argentina](skills/travel-promos-argentina/) | Consulta promociones de viajes (vuelos/hoteles/paquetes) y permite filtrarlas/rankearlas usando Anduin API |
 
 ## Installation
 
