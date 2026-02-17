@@ -7,6 +7,7 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | Skill | Description |
 |-------|-------------|
 | [bcra-central-deudores](skills/bcra-central-deudores/) | Query Argentina's BCRA Central de Deudores API to check credit status, debt history, and rejected checks by CUIT/CUIL/CDI |
+| [data912-market-data](skills/data912-market-data/) | Query Data912 market endpoints for MEP/CCL, live AR/US panels, historical OHLC by ticker, and USA options volatility analytics |
 
 ## Installation
 
