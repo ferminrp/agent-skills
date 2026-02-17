@@ -10,7 +10,13 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 
 ## Installation
 
-### Claude Code
+### Skills CLI (recommended)
+
+```bash
+npx skills add ferminrp/agent-skills
+```
+
+### Claude Code (local `.skill` file)
 
 ```bash
 claude install-skill /path/to/skill-name.skill

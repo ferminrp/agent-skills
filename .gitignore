@@ -1,0 +1,10 @@
+.DS_Store
+
+# Local agent/editor state
+.agent/
+.agents/
+.claude/
+.cursor/
+
+# Build artifacts
+dist/

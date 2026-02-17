@@ -20,6 +20,7 @@ Query Argentina's Central Bank debtor registry to obtain credit reports by CUIT/
 - **Auth**: None required (public API)
 - **Format**: JSON responses
 - **Input**: CUIT/CUIL/CDI as integer (no hyphens), e.g. `20123456789`
+- **Optional web interface**: `https://compara.ar/deudores/:cuit` (replace `:cuit` with the 11-digit CUIT/CUIL/CDI)
 
 ## Endpoints
 
@@ -147,7 +148,8 @@ curl -s "https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/ChequesRechazados
 2. **Fetch current debts** first — this is usually what the user wants
 3. **Fetch historical debts** if the user asks about evolution or past credit behavior
 4. **Fetch rejected checks** if relevant or requested
-5. **Present results** with clear interpretation of the `situacion` codes and amounts
+5. **If user prefers a UI**, share `https://compara.ar/deudores/:cuit` as a quick visual option
+6. **Present results** with clear interpretation of the `situacion` codes and amounts
 
 ## Error Handling
 
