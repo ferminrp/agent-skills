@@ -13,7 +13,7 @@ Consulta promociones de viajes (vuelos, hoteles y paquetes) y permite filtrarlas
 
 ## API Overview
 
-- **Base URL**: `https://anduin.ferminrp.workers.dev`
+- **Base URL**: `https://anduin.ferminrp.com`
 - **Auth**: None required
 - **Response format**: JSON
 - **Endpoint principal**: `/api/v1/promos`
@@ -30,11 +30,11 @@ Consulta promociones de viajes (vuelos, hoteles y paquetes) y permite filtrarlas
 Ejemplos de uso:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos[0:5]'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos | map(select(.category == "vuelos"))'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos | map(select(.destinationCountry == "brazil"))'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/promos" | jq '.data.promos | sort_by(-.score) | .[0:10]'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos[0:5]'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | map(select(.category == "vuelos"))'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | map(select(.destinationCountry == "brazil"))'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by(-.score) | .[0:10]'
 ```
 
 ## Campos clave

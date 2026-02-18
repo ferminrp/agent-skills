@@ -13,7 +13,7 @@ Consulta datos de Fondos Comunes de Inversion (FCI) para usuarios finales con en
 
 ## API Overview
 
-- **Base URL**: `https://anduin.ferminrp.workers.dev`
+- **Base URL**: `https://anduin.ferminrp.com`
 - **Auth**: None required
 - **Response format**: JSON
 - **Docs source**: `https://anduin.ferminrp.com/docs`
@@ -37,8 +37,8 @@ Consulta datos de Fondos Comunes de Inversion (FCI) para usuarios finales con en
 Ejemplos:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci?limit=20&order_by=patrimonio&order=desc" | jq '.'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci?categoria_id=3&horizonte=MED&limit=10" | jq '.data.fondos'
+curl -s "https://anduin.ferminrp.com/api/v1/fci?limit=20&order_by=patrimonio&order=desc" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci?categoria_id=3&horizonte=MED&limit=10" | jq '.data.fondos'
 ```
 
 ### 2) Fondo puntual
@@ -49,7 +49,7 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci?categoria_id=3&horizonte
 Ejemplo:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/1810%20Ahorro" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/1810%20Ahorro" | jq '.'
 ```
 
 ### 3) Historico de fondo
@@ -60,7 +60,7 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/1810%20Ahorro" | jq '.'
 Ejemplo:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/1810%20Ahorro/historico?intervalo=mensual&limit=12" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/1810%20Ahorro/historico?intervalo=mensual&limit=12" | jq '.'
 ```
 
 ### 4) Rendimiento de fondo
@@ -71,7 +71,7 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/1810%20Ahorro/historico?
 Ejemplo:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/1810%20Ahorro/rendimiento?periodo=30d" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/1810%20Ahorro/rendimiento?periodo=30d" | jq '.'
 ```
 
 ### 5) Comparar fondos
@@ -85,7 +85,7 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/1810%20Ahorro/rendimient
 Ejemplo:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/comparar?fondos=1810%20Ahorro,Adcap%20Balanceado&metrica=rendimiento" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/comparar?fondos=1810%20Ahorro,Adcap%20Balanceado&metrica=rendimiento" | jq '.'
 ```
 
 ### 6) Rankings
@@ -96,7 +96,7 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/comparar?fondos=1810%20A
 Ejemplo:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/rankings?periodo=30d&limit=10" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/rankings?periodo=30d&limit=10" | jq '.'
 ```
 
 ### 7) Categorias
@@ -107,8 +107,8 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/rankings?periodo=30d&lim
 Ejemplos:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/categorias" | jq '.'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/categorias/3" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/categorias" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/categorias/3" | jq '.'
 ```
 
 ### 8) Estadisticas y fechas
@@ -119,8 +119,8 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/categorias/3" | jq '.'
 Ejemplos:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/stats" | jq '.'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/fechas" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/stats" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/fechas" | jq '.'
 ```
 
 ### 9) Ficha / detalle de fondo
@@ -131,8 +131,8 @@ curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/fechas" | jq '.'
 Ejemplos:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/detalle/4538" | jq '.'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/fci/detalle/1810%20Ahorro" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/detalle/4538" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/fci/detalle/1810%20Ahorro" | jq '.'
 ```
 
 ## Campos clave

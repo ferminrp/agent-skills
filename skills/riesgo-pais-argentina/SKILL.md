@@ -13,7 +13,7 @@ Consulta la serie historica y el ultimo dato de riesgo pais de Argentina.
 
 ## API Overview
 
-- **Base URL**: `https://anduin.ferminrp.workers.dev`
+- **Base URL**: `https://anduin.ferminrp.com`
 - **Auth**: None required
 - **Response format**: JSON
 - **Endpoint principal**: `/api/v1/indices/riesgo-pais`
@@ -27,9 +27,9 @@ Consulta la serie historica y el ultimo dato de riesgo pais de Argentina.
 Ejemplos:
 
 ```bash
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/indices/riesgo-pais" | jq '.'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/indices/riesgo-pais" | jq '.data.datos[-1]'
-curl -s "https://anduin.ferminrp.workers.dev/api/v1/indices/riesgo-pais" | jq '.data.datos | map(select(.fecha >= "2025-01-01" and .fecha <= "2025-12-31"))'
+curl -s "https://anduin.ferminrp.com/api/v1/indices/riesgo-pais" | jq '.'
+curl -s "https://anduin.ferminrp.com/api/v1/indices/riesgo-pais" | jq '.data.datos[-1]'
+curl -s "https://anduin.ferminrp.com/api/v1/indices/riesgo-pais" | jq '.data.datos | map(select(.fecha >= "2025-01-01" and .fecha <= "2025-12-31"))'
 ```
 
 ## Campos clave
