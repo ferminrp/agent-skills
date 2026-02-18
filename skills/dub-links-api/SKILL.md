@@ -56,7 +56,7 @@ curl -s -X POST "https://api.dub.co/links" \
 ### 2) Update
 
 - `PATCH /links/{linkId}`
-- Updates an existing link by `linkId`.
+- Updates an existing link by `linkId` (also accepts `externalId` prefixed with `ext_`).
 
 ```bash
 curl -s -X PATCH "https://api.dub.co/links/{linkId}" \
@@ -80,7 +80,8 @@ curl -s -X PUT "https://api.dub.co/links/upsert" \
 ### 4) Delete
 
 - `DELETE /links/{linkId}`
-- Deletes a link by `linkId`.
+- Deletes a link by `linkId` (also accepts `externalId` prefixed with `ext_`).
+- Response: `{"id": "string"}`.
 
 ```bash
 curl -s -X DELETE "https://api.dub.co/links/{linkId}" \
@@ -104,10 +105,10 @@ curl -s "https://api.dub.co/links/info?domain=acme.link&key=promo" \
 
 - `GET /links`
 - Returns paginated list with filters.
-- Common query params: `domain`, `search`, `tagId`, `tagIds`, `tagNames`, `folderId`, `tenantId`, `page`, `pageSize`, `sortBy`, `sortOrder`.
+- Common query params: `domain`, `search`, `tagIds`, `tagNames`, `folderId`, `userId`, `tenantId`, `showArchived`, `page`, `pageSize` (default: 100, max: 100), `sortBy` (`createdAt`|`clicks`|`saleAmount`|`lastClicked`), `sortOrder` (`asc`|`desc`).
 
 ```bash
-curl -s "https://api.dub.co/links?page=1&pageSize=20&sortBy=createdAt&sortOrder=desc" \
+curl -s "https://api.dub.co/links?page=1&pageSize=100&sortBy=createdAt&sortOrder=desc" \
   -H "Authorization: Bearer $DUB_API_KEY" | jq '.'
 ```
 
@@ -115,6 +116,7 @@ curl -s "https://api.dub.co/links?page=1&pageSize=20&sortBy=createdAt&sortOrder=
 
 - `GET /links/count`
 - Returns number of links for the provided filters.
+- Common query params: `domain`, `search`, `tagIds`, `tagNames`, `folderId`, `userId`, `tenantId`, `showArchived`, `groupBy` (`domain`|`tagId`|`userId`|`folderId`).
 
 ```bash
 curl -s "https://api.dub.co/links/count?domain=acme.link" \
@@ -150,8 +152,9 @@ curl -s -X PATCH "https://api.dub.co/links/bulk" \
 ### 10) Bulk delete
 
 - `DELETE /links/bulk`
-- Deletes up to 100 links.
-- Required query param: `linkIds`.
+- Deletes up to 100 links. Non-existing IDs are ignored. **Irreversible.**
+- Required query param: `linkIds` (comma-separated).
+- Response: `{"deletedCount": number}`.
 
 ```bash
 curl -s -X DELETE "https://api.dub.co/links/bulk?linkIds=lnk_123,lnk_456" \
