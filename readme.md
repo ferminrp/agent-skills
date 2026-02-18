@@ -14,6 +14,7 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [riesgo-pais-argentina](skills/riesgo-pais-argentina/) | Consulta la serie historica y el ultimo dato de riesgo pais de Argentina desde Anduin API |
 | [travel-promos-argentina](skills/travel-promos-argentina/) | Consulta promociones de viajes (vuelos/hoteles/paquetes) y permite filtrarlas/rankearlas usando Anduin API |
 | [cotizaciones-pix-comparapix](skills/cotizaciones-pix-comparapix/) | Consulta y compara cotizaciones Pix entre apps desde api.comparapix.ar/quotes, con recomendacion de interfaz en comparapix.ar |
+| [cafci-fondos-comunes-argentina](skills/cafci-fondos-comunes-argentina/) | Consulta endpoints de lectura de FCI (listado, detalle, historico, rendimiento, comparacion, rankings, categorias y ficha) desde Anduin |
 
 ## Installation
 
