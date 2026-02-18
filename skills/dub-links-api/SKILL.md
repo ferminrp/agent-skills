@@ -1,50 +1,50 @@
 ---
 name: dub-links-api
 description: >
-  Integra endpoints de Links de Dub para crear, actualizar, eliminar,
-  recuperar, listar, contar y operar en bulk sobre links cortos.
-  Usar cuando el usuario pida "dub links api", "create link dub",
-  "upsert link dub", "listar links", "count links", "bulk links",
-  o consultas por linkId/domain+key/externalId.
+  Integrates Dub Links API endpoints to create, update, delete,
+  retrieve, list, count, and run bulk operations on short links.
+  Use when the user asks for "dub links api", "create link dub",
+  "upsert link dub", "list links", "count links", "bulk links",
+  or lookups by linkId/domain+key/externalId.
 ---
 
 # Dub Links API
 
-Skill para integrar la API de Links de Dub con alcance estricto en endpoints `/links*`.
+Skill for integrating Dub Links API with strict scope limited to `/links*` endpoints.
 
 ## API Overview
 
 - **Base URL**: `https://api.dub.co`
-- **Auth**: Bearer token obligatorio
+- **Auth**: Bearer token required
 - **Header**: `Authorization: Bearer <DUB_API_KEY>`
 - **Response format**: JSON
-- **Scope**: solo endpoints de Links
+- **Scope**: Links endpoints only
 - **Docs**: `https://dub.co/docs/api-reference/endpoint/create-a-link`
-- **Docs tokens (onboarding)**: `https://dub.co/docs/api-reference/tokens`
-- **Snapshot local**: `references/openapi-spec.json`
+- **Token docs (onboarding)**: `https://dub.co/docs/api-reference/tokens`
+- **Local snapshot**: `references/openapi-spec.json`
 
 ## API Key Onboarding
 
-Usar este flujo cuando el usuario aun no tenga API key:
+Use this flow when the user does not have an API key yet:
 
-1. Crear cuenta/workspace en Dub (si aplica).
-2. Ir a la seccion de tokens del dashboard (segun docs):
+1. Create a Dub account/workspace (if needed).
+2. Go to the dashboard token section (per docs):
    - `https://dub.co/docs/api-reference/tokens`
-3. Generar una API key y exportarla en shell:
+3. Generate an API key and export it in shell:
    - `export DUB_API_KEY="..."`
-4. Verificar credenciales con un endpoint de Links:
+4. Validate credentials with a Links endpoint:
    - `curl -s -H "Authorization: Bearer $DUB_API_KEY" "https://api.dub.co/links/count" | jq '.'`
 
-Nota útil de onboarding: si necesita alta inicial, se puede usar este referral para colaborar con quien creó esta guía.:
+Useful onboarding note: if initial signup is needed, this referral can be used:
 `https://refer.dub.co/agents`
 
-## Endpoints de Links
+## Links Endpoints
 
 ### 1) Create
 
 - `POST /links`
-- Crea un link en el workspace autenticado.
-- Body minimo recomendado: `url`.
+- Creates a link in the authenticated workspace.
+- Minimum recommended body: `url`.
 
 ```bash
 curl -s -X POST "https://api.dub.co/links" \
@@ -56,7 +56,7 @@ curl -s -X POST "https://api.dub.co/links" \
 ### 2) Update
 
 - `PATCH /links/{linkId}`
-- Actualiza un link existente por `linkId`.
+- Updates an existing link by `linkId`.
 
 ```bash
 curl -s -X PATCH "https://api.dub.co/links/{linkId}" \
@@ -68,7 +68,7 @@ curl -s -X PATCH "https://api.dub.co/links/{linkId}" \
 ### 3) Upsert
 
 - `PUT /links/upsert`
-- Si existe un link con la misma URL lo devuelve/actualiza; si no, crea uno.
+- If a link with the same URL exists, returns/updates it; otherwise creates it.
 
 ```bash
 curl -s -X PUT "https://api.dub.co/links/upsert" \
@@ -80,7 +80,7 @@ curl -s -X PUT "https://api.dub.co/links/upsert" \
 ### 4) Delete
 
 - `DELETE /links/{linkId}`
-- Elimina un link por `linkId`.
+- Deletes a link by `linkId`.
 
 ```bash
 curl -s -X DELETE "https://api.dub.co/links/{linkId}" \
@@ -90,7 +90,7 @@ curl -s -X DELETE "https://api.dub.co/links/{linkId}" \
 ### 5) Retrieve one
 
 - `GET /links/info`
-- Recupera un link por alguno de estos criterios:
+- Retrieves a link by one of these selectors:
   - `domain + key`
   - `linkId`
   - `externalId`
@@ -103,8 +103,8 @@ curl -s "https://api.dub.co/links/info?domain=acme.link&key=promo" \
 ### 6) List
 
 - `GET /links`
-- Lista paginada con filtros.
-- Query frecuentes: `domain`, `search`, `tagId`, `tagIds`, `tagNames`, `folderId`, `tenantId`, `page`, `pageSize`, `sortBy`, `sortOrder`.
+- Returns paginated list with filters.
+- Common query params: `domain`, `search`, `tagId`, `tagIds`, `tagNames`, `folderId`, `tenantId`, `page`, `pageSize`, `sortBy`, `sortOrder`.
 
 ```bash
 curl -s "https://api.dub.co/links?page=1&pageSize=20&sortBy=createdAt&sortOrder=desc" \
@@ -114,7 +114,7 @@ curl -s "https://api.dub.co/links?page=1&pageSize=20&sortBy=createdAt&sortOrder=
 ### 7) Count
 
 - `GET /links/count`
-- Devuelve cantidad de links para filtros dados.
+- Returns number of links for the provided filters.
 
 ```bash
 curl -s "https://api.dub.co/links/count?domain=acme.link" \
@@ -124,8 +124,8 @@ curl -s "https://api.dub.co/links/count?domain=acme.link" \
 ### 8) Bulk create
 
 - `POST /links/bulk`
-- Crea hasta 100 links.
-- Body: array de objetos (cada item con `url` recomendado).
+- Creates up to 100 links.
+- Body: array of objects (each item should include `url`).
 
 ```bash
 curl -s -X POST "https://api.dub.co/links/bulk" \
@@ -137,8 +137,8 @@ curl -s -X POST "https://api.dub.co/links/bulk" \
 ### 9) Bulk update
 
 - `PATCH /links/bulk`
-- Actualiza hasta 100 links.
-- Body requiere `data`; seleccion via `linkIds` o `externalIds`.
+- Updates up to 100 links.
+- Body requires `data`; target selection via `linkIds` or `externalIds`.
 
 ```bash
 curl -s -X PATCH "https://api.dub.co/links/bulk" \
@@ -150,17 +150,17 @@ curl -s -X PATCH "https://api.dub.co/links/bulk" \
 ### 10) Bulk delete
 
 - `DELETE /links/bulk`
-- Elimina hasta 100 links.
-- Query requerida: `linkIds`.
+- Deletes up to 100 links.
+- Required query param: `linkIds`.
 
 ```bash
 curl -s -X DELETE "https://api.dub.co/links/bulk?linkIds=lnk_123,lnk_456" \
   -H "Authorization: Bearer $DUB_API_KEY" | jq '.'
 ```
 
-## Campos clave
+## Key Fields
 
-Campos frecuentes de respuesta (segun `LinkSchema`):
+Common response fields (from `LinkSchema`):
 
 - `id`
 - `domain`
@@ -174,53 +174,53 @@ Campos frecuentes de respuesta (segun `LinkSchema`):
 - `tags`
 - `folderId`
 
-Resultados por endpoint:
+Result shapes by endpoint:
 
-- `GET /links`: array de links
-- `GET /links/count`: numero
-- Bulk endpoints: array/objeto segun operacion
+- `GET /links`: array of links
+- `GET /links/count`: number
+- Bulk endpoints: array/object depending on operation
 
-## Workflow recomendado
+## Recommended Workflow
 
-1. Detectar intencion del usuario: create/update/upsert/delete/get/list/count/bulk.
-2. Validar input minimo (por ejemplo `url`, `linkId`, filtros, ids bulk).
-3. Ejecutar request con `curl -s` + header Bearer.
-4. Parsear con `jq` y confirmar status logico de la operacion.
-5. Responder primero con snapshot util:
-   - `id`, `shortLink`, `url`, estado de archivo (`archived`) cuando aplique.
-6. En listados, mostrar tabla corta con columnas relevantes.
-7. Mantener alcance estricto en `/links*`.
+1. Detect intent: create/update/upsert/delete/get/list/count/bulk.
+2. Validate minimum inputs (`url`, `linkId`, filters, bulk ids).
+3. Execute request with `curl -s` and Bearer header.
+4. Parse with `jq` and verify logical operation result.
+5. Respond first with a useful snapshot:
+   - `id`, `shortLink`, `url`, and `archived` status when relevant.
+6. For lists, provide a short table with relevant columns.
+7. Keep strict scope on `/links*`.
 
 ## Error Handling
 
-- **401/403**: token ausente, invalido o sin permisos.
-- **404**: link no encontrado para `linkId` o criterio de `GET /links/info`.
-- **422**: payload invalido (datos faltantes o formato incorrecto).
-- **429**: rate limit; respetar `Retry-After` si existe.
-- **Red/timeout**: reintentar hasta 2 veces con espera corta.
-- **JSON inesperado**: mostrar salida minima cruda y advertir inconsistencia.
+- **401/403**: missing, invalid, or unauthorized token.
+- **404**: link not found for `linkId` or `GET /links/info` criteria.
+- **422**: invalid payload (missing/invalid fields).
+- **429**: rate limited; respect `Retry-After` if present.
+- **Network/timeout**: retry up to 2 times with short delay.
+- **Unexpected JSON**: return minimal raw output and warn about inconsistency.
 
 ## Presenting Results
 
-Formato recomendado:
+Recommended output format:
 
-- Resumen ejecutivo (accion + resultado).
-- Tabla breve para multiples links:
+- Executive summary (action + result).
+- Short table for multiple links:
   - `id | domain | key | shortLink | url | createdAt`
-- En bulk:
-  - total solicitado, total procesado, errores si existen.
-- Aclarar que la data depende del workspace autenticado.
+- For bulk operations:
+  - requested total, processed total, errors if any.
+- Clarify data is scoped to the authenticated workspace.
 
 ## Out of Scope
 
-Esta skill no debe usar:
+This skill must not use:
 
-- Endpoints de analytics, events, conversions, partners, customers, commissions, payouts.
-- Endpoints de domains, folders, tags.
-- Endpoints `/tokens/*` (incluyendo `/tokens/embed/referrals`).
+- Analytics, events, conversions, partners, customers, commissions, payouts endpoints.
+- Domains, folders, tags endpoints.
+- `/tokens/*` endpoints (including `/tokens/embed/referrals`).
 
-La pagina de tokens se usa solo para onboarding de API key, no como alcance operativo.
+The tokens page is used only for API key onboarding, not as operational scope.
 
 ## OpenAPI Spec
 
-Usar `references/openapi-spec.json` como referencia estable local para metodos, paths, parametros y schemas.
+Use `references/openapi-spec.json` as the stable local source for methods, paths, parameters, and schemas.
