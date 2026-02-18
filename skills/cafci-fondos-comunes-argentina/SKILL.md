@@ -17,7 +17,7 @@ Consulta datos de Fondos Comunes de Inversion (FCI) para usuarios finales con en
 - **Auth**: None required
 - **Response format**: JSON
 - **Docs source**: `https://anduin.ferminrp.com/docs`
-- **Scope note**: esta skill cubre solo endpoints de lectura para usuarios finales (sin endpoints de sync/status).
+
 
 ## Endpoints de Lectura
 
