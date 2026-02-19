@@ -52,15 +52,16 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
   - `totalPromos` (int)
   - `promos` (array)
 - `promos[]`:
-  - `id`, `date`, `title`, `link`, `permalink`, `thumbnailUrl`
+  - `id`, `date`, `title`, `permalink`, `thumbnailUrl`
   - `destinationCountry` (puede ser `null`)
   - `category`
   - `score` (numerico para ranking, puede no venir si falla clasificacion AI)
 - Valores dinamicos observados hoy (ejemplos, no lista cerrada):
   - `category`: `vuelos`, `hoteles`, `autos`, `paquetes`, `asistencia`, `otros`
   - `destinationCountry`: `brazil`, `united_states`, `spain`, `dominican_republic`, `aruba`, `mexico`, `japan`, `portugal`, `europe`, `null`
-- Semantica adicional de OpenAPI:
+- Semantica adicional:
   - `permalink` se construye dinamicamente como `/links/viajes/:id` sobre el host de la request
+  - la respuesta ya no expone `link`; usar `permalink` como URL de salida
 
 ## Workflow
 
@@ -82,7 +83,7 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
    - Top 3 promos por score o relevancia
 6. Luego mostrar tabla corta (top 5/10):
    - `date | category | destinationCountry | score | title`
-7. Incluir links (`link` o `permalink`) solo para promos mostradas.
+7. Incluir solo `permalink` para promos mostradas.
 8. Mantener respuesta informativa, sin consejos financieros ni garantias de disponibilidad.
 
 ## Error Handling
