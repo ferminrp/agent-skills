@@ -17,10 +17,12 @@ Consulta promociones de viajes (vuelos, hoteles y paquetes) y permite filtrarlas
 - **Auth**: None required
 - **Response format**: JSON
 - **Endpoint principal**: `/api/v1/promos`
+- **OpenAPI**: `https://anduin.ferminrp.com/docs/openapi.json`
 - **Fuente upstream**: `data.source`
 - **Timestamps relevantes**:
   - `data.lastUpdated` (actualizacion de promos)
   - `timestamp` (respuesta del servicio)
+- **Query params documentados para `/api/v1/promos`**: ninguno
 - **Nota**: los query params probados (`category`, `destinationCountry`, `limit`, `q`) no filtran en origen; filtrar localmente con `jq` (verificado sobre la respuesta actual del endpoint).
 
 ## Endpoint
@@ -53,10 +55,12 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
   - `id`, `date`, `title`, `link`, `permalink`, `thumbnailUrl`
   - `destinationCountry` (puede ser `null`)
   - `category`
-  - `score` (numerico para ranking)
+  - `score` (numerico para ranking, puede no venir si falla clasificacion AI)
 - Valores dinamicos observados hoy (ejemplos, no lista cerrada):
-  - `category`: `vuelos`, `hoteles`, `paquetes`, `otros`, `autos`
+  - `category`: `vuelos`, `hoteles`, `autos`, `paquetes`, `asistencia`, `otros`
   - `destinationCountry`: `brazil`, `united_states`, `spain`, `dominican_republic`, `aruba`, `mexico`, `japan`, `portugal`, `europe`, `null`
+- Semantica adicional de OpenAPI:
+  - `permalink` se construye dinamicamente como `/links/viajes/:id` sobre el host de la request
 
 ## Workflow
 
@@ -85,6 +89,8 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
 
 - **HTTP no exitoso**:
   - Informar codigo HTTP y endpoint consultado.
+- **404 (`No promos data available`)**:
+  - Informar que no hay datos cacheados de promos en este momento.
 - **`success: false`**:
   - Mostrar payload de error si existe.
 - **JSON inesperado**:
