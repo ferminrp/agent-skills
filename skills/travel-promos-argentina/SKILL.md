@@ -21,7 +21,7 @@ Consulta promociones de viajes (vuelos, hoteles y paquetes) y permite filtrarlas
 - **Timestamps relevantes**:
   - `data.lastUpdated` (actualizacion de promos)
   - `timestamp` (respuesta del servicio)
-- **Nota**: los query params probados (`category`, `destinationCountry`, `limit`, `q`) no filtran en origen; filtrar localmente con `jq`.
+- **Nota**: los query params probados (`category`, `destinationCountry`, `limit`, `q`) no filtran en origen; filtrar localmente con `jq` (verificado sobre la respuesta actual del endpoint).
 
 ## Endpoint
 
@@ -33,7 +33,9 @@ Ejemplos de uso:
 curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.'
 curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos[0:5]'
 curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | map(select(.category == "vuelos"))'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | map(select(.category == "autos"))'
 curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | map(select(.destinationCountry == "brazil"))'
+curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by(.date) | reverse | .[0:10]'
 curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by(-.score) | .[0:10]'
 ```
 
@@ -53,8 +55,8 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
   - `category`
   - `score` (numerico para ranking)
 - Valores dinamicos observados hoy (ejemplos, no lista cerrada):
-  - `category`: `vuelos`, `hoteles`, `paquetes`, `otros`
-  - `destinationCountry`: `brazil`, `united_states`, `spain`, `dominican_republic`, `aruba`, `south_africa`, `null`
+  - `category`: `vuelos`, `hoteles`, `paquetes`, `otros`, `autos`
+  - `destinationCountry`: `brazil`, `united_states`, `spain`, `dominican_republic`, `aruba`, `mexico`, `japan`, `portugal`, `europe`, `null`
 
 ## Workflow
 
@@ -68,6 +70,7 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
 4. Aplicar filtros y orden localmente con `jq`:
    - Por `category`
    - Por `destinationCountry`
+   - Por texto en `title` o `id` cuando aplique
    - Por `date` o `score`
 5. Responder primero con snapshot:
    - Cantidad total (`totalPromos`)
