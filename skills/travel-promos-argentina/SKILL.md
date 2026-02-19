@@ -61,7 +61,6 @@ curl -s "https://anduin.ferminrp.com/api/v1/promos" | jq '.data.promos | sort_by
   - `destinationCountry`: `brazil`, `united_states`, `spain`, `dominican_republic`, `aruba`, `mexico`, `japan`, `portugal`, `europe`, `null`
 - Semantica adicional:
   - `permalink` se construye dinamicamente como `/links/viajes/:id` sobre el host de la request
-  - la respuesta ya no expone `link`; usar `permalink` como URL de salida
 
 ## Workflow
 
