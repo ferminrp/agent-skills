@@ -17,6 +17,7 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [cafci-fondos-comunes-argentina](skills/cafci-fondos-comunes-argentina/) | Consulta endpoints de lectura de FCI (listado, detalle, historico, rendimiento, comparacion, rankings, categorias y ficha) desde Anduin |
 | [dub-links-api](skills/dub-links-api/) | Integra endpoints de Links de Dub (create/update/upsert/delete/get/list/count/bulk) con auth Bearer y alcance exclusivo de Links |
 | [mapcn](skills/mapcn/) | Technical guide to install and integrate mapcn map components (Map, Controls, Markers, Popups, Routes, Clusters, advanced MapLibre access) in React/shadcn projects |
+| [cloudflare-workers-url-shortner](skills/cloudflare-workers-url-shortner/) | Build and operate a resilient URL shortner on Cloudflare Workers with Upstash Redis + D1, including non-blocking click tracking and alerting |
 
 ## Installation
 
