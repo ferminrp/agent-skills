@@ -44,12 +44,18 @@ curl -s "https://api.pub.cafci.org.ar/tipo-renta" \
 - Leer principalmente `.data`.
 - En dias sin informacion puede venir `data: []` o un objeto de error como `{"error":"inexistance"}`.
 
+**IMPORTANTE — estructura mixta de `.data[]`**: el array mezcla dos tipos de registros:
+- **Agregados** (estadisticas por categoria): solo tienen `fondo` (label como `"Region: Argentina"`, `"Moneda: Peso Argentina"`) y `patrimonio`.
+- **Por clase** (fondos individuales): tienen `fecha`, `vcp`, `ccp`, `patrimonio`, `horizonte` y `fondo` con el nombre real de la clase.
+
+Para filtrar solo fondos individuales usar `select(.fecha != null)`. Para ordenar numericamente por patrimonio agregar `select((.patrimonio | type) == "number")` ya que algunos valores pueden ser strings.
+
 ```bash
 curl -s "https://api.pub.cafci.org.ar/estadisticas/informacion/diaria/2/2026-04-20" \
   -H "accept: application/json, text/plain, */*" \
   -H "origin: https://www.cafci.org.ar" \
   -H "referer: https://www.cafci.org.ar/" \
-  -H "user-agent: Mozilla/5.0" | jq '.data'
+  -H "user-agent: Mozilla/5.0" | jq '[.data[] | select(.fecha != null and (.patrimonio | type) == "number")] | sort_by(.patrimonio) | reverse | .[0:10]'
 ```
 
 ### 3) Listado/buscador de fondos
@@ -57,6 +63,7 @@ curl -s "https://api.pub.cafci.org.ar/estadisticas/informacion/diaria/2/2026-04-
 - `GET /fondo?estado=1&include=...&limit=0&order=clase_fondos.nombre`
 - Endpoint usado por el buscador de la web para listar fondos activos y metadata relacionada.
 - Devuelve datos en `.data[]`, con IDs de fondo y clases en `clase_fondos[]`.
+- **IMPORTANTE**: `tipoRentaId` es un **string** (`"4"`), no un numero. Usar siempre comparacion con string: `select(.tipoRentaId == "4")`. Comparar con numero devuelve 0 resultados sin error.
 
 ```bash
 curl -s "https://api.pub.cafci.org.ar/fondo?estado=1&include=entidad;depositaria,entidad;gerente,tipoRenta,tipoRentaMixta,region,benchmark,horizonte,duration,tipo_fondo,clase_fondo&limit=0&order=clase_fondos.nombre" \
@@ -71,12 +78,19 @@ curl -s "https://api.pub.cafci.org.ar/fondo?estado=1&include=entidad;depositaria
 - `GET /fondo/{fondoId}/clase/{claseId}/ficha`
 - Requiere ambos IDs: fondo y clase.
 
+**Campos clave en `.data.info`**:
+- **Patrimonio actualizado** (mas reciente que estadisticas diarias): `.data.info.diaria.actual.patrimonio` y `.data.info.diaria.actual.fecha`
+- **Management fee (honorarios gerente)**: `.data.info.mensual.honorariosComisiones.honorariosAdministracionGerente` — porcentaje anual como string, ej. `"1.9400"`
+- **Otros costos**: `.data.info.mensual.honorariosComisiones.honorariosAdministracionDepositaria`, `.comisionIngreso`, `.comisionRescate`
+- **Rendimientos**: `.data.info.diaria.rendimientos.day.tna`, `.month`, `.oneYear`, etc.
+- **Cartera semanal**: `.data.info.semanal.carteras[]` con `nombreActivo` y `share` (%)
+
 ```bash
 curl -s "https://api.pub.cafci.org.ar/fondo/1717/clase/5772/ficha" \
   -H "accept: application/json, text/plain, */*" \
   -H "origin: https://www.cafci.org.ar" \
   -H "referer: https://www.cafci.org.ar/" \
-  -H "user-agent: Mozilla/5.0" | jq '.data.info'
+  -H "user-agent: Mozilla/5.0" | jq '{patrimonio: .data.info.diaria.actual.patrimonio, fecha: .data.info.diaria.actual.fecha, fee_gerente: .data.info.mensual.honorariosComisiones.honorariosAdministracionGerente}'
 ```
 
 ### 5) Tipos/clases de un fondo
@@ -119,6 +133,16 @@ curl -s "https://api.pub.cafci.org.ar/fondo/tipo-clase" \
 
 - Pedir aclaracion de clase cuando haya multiples clases validas para el fondo.
 - Si hay una sola clase, continuar automaticamente.
+
+### D) Top N fondos por patrimonio con management fee
+
+1. Consultar `/tipo-renta` para obtener `tipoRentaId` (es string, ej. `"4"`).
+2. Consultar estadisticas diarias, filtrar registros individuales y ordenar:
+   ```bash
+   jq '[.data[] | select(.fecha != null and (.patrimonio | type) == "number")] | sort_by(.patrimonio) | reverse | .[0:N]'
+   ```
+3. Para cada fondo del top N: buscar `fondoId` y `claseId` en el listado de fondos filtrando por `tipoRentaId == "4"` (string).
+4. Consultar `/fondo/{fondoId}/clase/{claseId}/ficha` en paralelo (usar `&` + `wait` en bash) para obtener el fee desde `.data.info.mensual.honorariosComisiones.honorariosAdministracionGerente`.
 
 ## Manejo de Respuestas Vacias y Errores
 
