@@ -21,6 +21,7 @@ Skill para consultar información pública de fondos comunes de inversión en Ar
 | 1 | `https://estadisticas.cafci.org.ar/consulta-de-fondos.json` | Catálogo: fondos + clases + IDs + **honorarios/fees** + metadata | JSON | ~2.7 MB |
 | 2 | `https://api.pub.cafci.org.ar/pb_get` | Snapshot diario: vcp, patrimonio, market share, variaciones | XLSX | ~900 KB |
 | 3 | `https://defuddle.md/https://estadisticas.cafci.org.ar/fondos/{fondoId}?clase={claseId}` | Ficha individual: rendimientos por período (7d/1m/90d/180d/YTD/12m) | Markdown | ~2 KB |
+| 4 | `https://estadisticas.cafci.org.ar/fondos/{fondoId}?clase={claseId}` (HTML directo) | Composición de cartera (top activos + porcentaje) embebida como atributo del `<canvas>` | HTML | ~23 KB |
 
 Sin auth, sin token. Sólo `/pb_get` requiere headers de browser para no devolver 403.
 
@@ -123,7 +124,40 @@ CLASE_NOMBRE=$(jq -r --argjson fid $FONDO_ID --argjson cid $CLASE_ID \
 jq --arg n "$CLASE_NOMBRE" '.fondos[] | select(.nombre == $n)' "$DAILY"
 ```
 
-### 6) Resolver fondoId/claseId desde un nombre
+### 6) Composición de cartera de un fondo+clase
+
+La composición está embebida en el HTML como atributo `data-pie-chart-items-value` del `<canvas>`. defuddle no la captura.
+
+```bash
+FONDO_ID=1717
+CLASE_ID=5772
+
+curl -s "https://estadisticas.cafci.org.ar/fondos/${FONDO_ID}?clase=${CLASE_ID}" | python3 -c "
+import sys, re, html, json
+h = sys.stdin.read()
+m_date = re.search(r'class=\"valores\">Valores al ([^<]+)<', h)
+m = re.search(r'data-pie-chart-items-value=\"([^\"]+)\"', h)
+print(json.dumps({
+    'fecha_cartera': m_date.group(1) if m_date else None,
+    'composicion': json.loads(html.unescape(m.group(1))) if m else []
+}, ensure_ascii=False, indent=2))
+"
+```
+
+Output:
+```json
+{
+  "fecha_cartera": "10/04/2026",
+  "composicion": [
+    {"nombre": "Bonos Rep Argentina 2030", "porcentaje": 11.5},
+    {"nombre": "FCI IAM Liquidez en Dólares - Clase B", "porcentaje": 10.0},
+    ...
+    {"nombre": "Resto de Activos", "porcentaje": 29.2}
+  ]
+}
+```
+
+### 7) Resolver fondoId/claseId desde un nombre
 
 ```bash
 jq -r '.fondos[]
@@ -209,7 +243,7 @@ jq -r '.fondos[]
 Markdown con tablas:
 - **Rendimiento histórico**: Valor Cuotaparte + 7 días, 1 mes, 90 días, 180 días, En el año, 12 meses.
 - **Valores al [fecha]**: patrimonio bajo administración, valor cuotaparte.
-- **Composición de Cartera**: sólo la fecha (la composición real no se sirve estática).
+- **Composición de Cartera**: defuddle muestra solo la fecha. La composición real (top activos + porcentaje) está en el HTML directo como atributo `data-pie-chart-items-value` del `<canvas>` — ver operación 6.
 - **Honorarios y Comisiones**: gerente, depositaria, ingreso, egreso, transferencia, gastos ordinarios, comisión de éxito.
 - **Datos del Fondo**: Administradora, Depositaria, Tipo de Renta, Tipo de DD, Región, Benchmark, Horizonte, Duration, Moneda, Código CNV.
 - **Inversión mínima** (con moneda).
@@ -217,8 +251,8 @@ Markdown con tablas:
 
 ## Limitaciones conocidas
 
-- **Composición de cartera real**: no disponible públicamente (defuddle muestra el bloque pero la composición se carga vía JS).
 - **Series temporales arbitrarias**: el snapshot diario sólo expone día actual + ayer + mes anterior + fin de año + año pasado. No hay endpoint público de histórico libre.
+- **Composición de cartera detallada**: el HTML expone los ~14 activos principales agrupando el resto como "Resto de Activos" (~30%). No se publica el desglose completo.
 - **API REST anterior** (`api.pub.cafci.org.ar/tipo-renta`, `/fondo/...`, `/estadisticas/informacion/diaria/...`): caída desde 2026-04 (HTTP 403 deliberado en CloudFront). No usar ni intentar reactivar.
 - **CATALOG vs DAILY**: CATALOG cuenta fondos únicos (1134), DAILY cuenta clases (4052). Para joinear, usar `clases[].nombre` (CATALOG) ↔ `fondos[].nombre` (DAILY) — son strings exactos.
 - **Tipo de renta**: en CATALOG es solo "Renta Variable"; en DAILY es "Renta Variable Peso Argentina" (con moneda+región). No son intercambiables como filtro.
