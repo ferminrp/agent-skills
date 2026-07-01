@@ -20,6 +20,7 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [mapcn](skills/mapcn/) | Technical guide to install and integrate mapcn map components (Map, Controls, Markers, Popups, Routes, Clusters, advanced MapLibre access) in React/shadcn projects |
 | [cloudflare-workers-url-shortner](skills/cloudflare-workers-url-shortner/) | Build and operate a resilient URL shortner on Cloudflare Workers with Upstash Redis + D1, including non-blocking click tracking and alerting |
 | [writing-well](skills/writing-well/) | Audit and improve writing quality with a 7-check framework for clarity, concision, evidence, jargon, and flow, including severity-ranked findings and a full rewrite suggestion |
+| [workflowy](skills/workflowy/) | Read and write a Workflowy outline via its official REST API (list/read/export/create/update/move/complete/delete nodes) using a Bearer API key from the environment |
 
 ## Installation
 
