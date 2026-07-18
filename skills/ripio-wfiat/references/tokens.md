@@ -11,6 +11,7 @@ Issuer: [Ripio — Stablecoins locales](https://www.ripio.com/es/criptos/stablec
 - **Type**: wrapped / local-fiat stablecoin (Ripio)
 - **Address pattern**: same contract address listed on multiple EVM chains in CoinGecko
 - **Price API**: CoinGecko id (slug), not ticker alone
+- **Price display**: always invert — show fiat per 1 USD (e.g. `USD/ARS`), not "1 wFiat = X USD"
 - **CMC**: avoid symbol-only lookups (collision risk)
 
 ### Platforms (all six tokens)
@@ -114,6 +115,13 @@ curl -s "https://api.coingecko.com/api/v3/simple/price?ids=chilean-peso&vs_curre
 
 ```bash
 curl -s "https://api.coingecko.com/api/v3/simple/price?ids=argentine-peso,brazilian-real,mexican-peso,colombian-peso,peruvian-sol,chilean-peso&vs_currencies=usd,ars,brl,mxn&include_last_updated_at=true" | jq '.'
+```
+
+Invert for presentation (fiat per 1 USD):
+
+```bash
+curl -s "https://api.coingecko.com/api/v3/simple/price?ids=argentine-peso,brazilian-real,mexican-peso,colombian-peso,peruvian-sol,chilean-peso&vs_currencies=usd" \
+  | jq 'to_entries | map({symbol: .key, pair: ("USD/" + (if .key == "argentine-peso" then "ARS" elif .key == "brazilian-real" then "BRL" elif .key == "mexican-peso" then "MXN" elif .key == "colombian-peso" then "COP" elif .key == "peruvian-sol" then "PEN" else "CLP" end)), rate: (1 / .value.usd)})'
 ```
 
 ## GeckoTerminal helpers
