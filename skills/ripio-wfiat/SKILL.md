@@ -4,6 +4,7 @@ description: >
   Canonical registry and recipes for Ripio wFiat LATAM stablecoins (wARS, wBRL,
   wMXN, wCOP, wPEN, wCLP): contract addresses, CoinGecko ids, chains, and how to
   query prices/DEX via CoinGecko, GeckoTerminal, and Uniswap v4 subgraph.
+  Always present wFiat prices inverted (fiat per 1 USD, e.g. USD/ARS).
   Use when the user mentions "wARS", "wBRL", "wMXN", "wCOP", "wPEN", "wCLP",
   "wfiat", "wFiat", "Ripio stablecoin", "stablecoin local Ripio", "peso wrapeado",
   "wrapped ARS/BRL/MXN/COP/PEN/CLP", or asks for addresses/prices/pools of these tokens.
@@ -52,6 +53,28 @@ Default when the user does not specify a chain: **Ethereum**, then Base.
 - Do **not** look up CMC by symbol `WARS` / `WBRL` alone (collisions exist, e.g. MetaWars). Prefer CoinGecko for wFiat.
 - Addresses are case-insensitive; normalize to lowercase for subgraph queries.
 - These are **informational** market tokens, not financial advice.
+
+### Price display (inverted)
+
+**Always invert wFiat prices when presenting them.** CoinGecko returns how much USD (or another fiat) one wFiat token is worth; in LATAM it is more natural to show **how much local fiat equals 1 USD** (e.g. "1 USD = 1.450 ARS", not "1 wARS = $0,00069").
+
+| API field | Raw meaning | Present as |
+|-----------|-------------|------------|
+| `.usd` | 1 wFiat in USD | **1 USD = 1/price_usd {FIAT}** |
+
+Examples:
+
+- wARS `usd: 0.00069` → **1 USD ≈ 1.449 ARS**
+- wBRL `usd: 0.18` → **1 USD ≈ 5,56 BRL**
+- wMXN `usd: 0.058` → **1 USD ≈ 17,24 MXN**
+
+Rounding: integers (or 0 decimals) for ARS, COP, CLP; 2–4 decimals for BRL, MXN, PEN. Always label the pair explicitly (`USD/ARS`, `USD/BRL`, etc.).
+
+```bash
+# Invert CoinGecko USD quote → fiat per 1 USD (wARS example)
+curl -s "https://api.coingecko.com/api/v3/simple/price?ids=argentine-peso&vs_currencies=usd" \
+  | jq '.["argentine-peso"].usd as $p | { pair: "USD/ARS", rate: (1 / $p) }'
+```
 
 ## Recipe map — which skill / API
 
@@ -118,7 +141,7 @@ Swap `TOKEN` for any other wFiat address from the registry. For non-Ethereum cha
 2. If chain missing, default to Ethereum (mention the assumption).
 3. Choose recipe by intent (price vs DEX vs Uniswap).
 4. Execute `curl` + `jq`; on `429` backoff (CoinGecko/GeckoTerminal rate limits).
-5. Present: symbol, fiat peg, address, chain, price (and pool summary if DEX).
+5. Present: symbol, fiat peg, address, chain, **inverted** price (and pool summary if DEX).
 6. Cross-load API skills only when deeper endpoint docs are needed.
 
 ## Presenting Results
@@ -127,7 +150,7 @@ Lead with a compact card per token:
 
 - Symbol / fiat / CoinGecko id
 - Address + chain(s)
-- Price in USD and native fiat when available
+- **Inverted price**: fiat per 1 USD (e.g. `USD/ARS 1.449`, `USD/BRL 5,56`) — never lead with "1 wFiat = X USD"
 - Optional: top pool / TVL if onchain query was run
 
 Clarify data is informational; no investment advice.
