@@ -64,6 +64,40 @@ Other chains use **different** PoolManager addresses. Resolve them from
 or `networks.json` in the subgraph repo. Always lowercase hex IDs in queries
 when the deployment expects checksum-insensitive IDs.
 
+## Known deployments by chain
+
+The Graph Explorer / Uniswap docs only surface the Ethereum mainnet id
+directly — for anything else you're on your own. These additional ids were
+cross-referenced across three independent third-party integrations
+(ParaSwap `paraswap-dex-lib`, DefiLlama `DefiLlama-Adapters`, and
+`salviega/streams-contracts`) as of Jul 2026. Treat as **community-sourced,
+not Uniswap Labs-confirmed** — re-verify indexing status before relying on
+them in production (see Reliability note above).
+
+| Chain | Subgraph id | PoolManager |
+|-------|-------------|-------------|
+| Ethereum | `DiYPVdygkfjDWhbxGSqAQxwBKmfKnkWQojqeM2rkLb3G` | `0x000000000004444c5dc75cb358380d2e3de08a90` |
+| Base | `HNCFA9TyBqpo5qpe6QreQABAA1kV8g46mhkCcicu6v2R` | `0x498581ff718922c3f8e6a244956af099b2652b2b` |
+| BNB Chain | `2qQpC8inZPZL4tYfRQPFGZhsE8mYzE67n5z3Yf5uuKMu` | `0x28e2ea090877bf75740558f6bfb36a5ffee9e9df` |
+| Polygon | `CwpebM66AH5uqS5sreKij8yEkkPcHvmyEs7EwFtdM5ND` | `0x67366782805870060151383f4bbff9dab53e5cd6` |
+
+### Chains without a public v4 subgraph
+
+- **World Chain** — Uniswap indexes v4 there on a **private Goldsky**
+  deployment (`GOLD_SKY_WORLDCHAIN_V4_ID`, per `Uniswap/routing-api`
+  source), not on The Graph decentralized network. No public subgraph id
+  exists to query here — use GeckoTerminal (network `world-chain`, see
+  `coingecko-and-coinmarketcap-apis`) for pool/TVL data on this chain
+  instead of guessing at an id.
+- **Gnosis** — Uniswap v4 is not deployed at all (only earlier versions
+  elsewhere); nothing to query on any indexer.
+
+If a chain you need isn't in the table above, don't guess an id from a single
+source — cross-check at least two independent integrations (search GitHub for
+`gateway.thegraph.com/api/subgraphs/id` or `thegraph.com/api/subgraphs/id`
+near the chain name) before trusting one repo, since a single project can
+carry a stale or wrong id.
+
 ## Core Entities
 
 | Entity | Use for |
@@ -234,6 +268,16 @@ curl -s "https://gateway.thegraph.com/api/subgraphs/id/DiYPVdygkfjDWhbxGSqAQxwBK
   -d '{"query":"{ pools(first: 5, orderBy: liquidity, orderDirection: desc) { id liquidity } }"}' \
   | jq '.'
 ```
+
+## Calling from a browser (CORS)
+
+The gateway (`gateway.thegraph.com`) responds with
+`access-control-allow-origin: *` (confirmed Jul 2026), so `fetch()` works
+directly from client-side code — e.g. a static HTML artifact — without a
+proxy. The API key is then visible to anyone reading the page's source or
+`localStorage`; never embed a paid or high-quota key in anything public,
+and prefer making the key an optional user-supplied input (stored in the
+visitor's own `localStorage`) over baking it into shipped code.
 
 ## Pagination
 

@@ -25,6 +25,20 @@ Issuer: [Ripio — Stablecoins locales](https://www.ripio.com/es/criptos/stablec
 | `polygon-pos` | Polygon |
 | `xdai` | Gnosis |
 
+Crosswalk to GeckoTerminal network ids and Uniswap app slugs: see "Chain
+crosswalk" in `SKILL.md`.
+
+### Known extra deployment not yet on CoinGecko
+
+**Celo** — verified onchain (Jul 2026) via `eth_call` to `symbol()` on the
+canonical wARS address against a public RPC (`forno.celo.org`); returns
+`wARS` at the same address as every other chain. CoinGecko does not list
+`celo` as a platform yet and there's no pool there as of this writing — see
+"Detecting a deployment CoinGecko hasn't listed yet" in `SKILL.md` for the
+verification recipe. Not added to the canonical registry table above since
+CoinGecko's platform list is this skill's identity source of truth (see
+Identity rules) — treat this as a heads-up, re-verify before relying on it.
+
 ## Tokens
 
 ### wARS — Argentine Peso
