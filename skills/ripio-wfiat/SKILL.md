@@ -61,7 +61,6 @@ Default when the user does not specify a chain: **Ethereum**, then Base.
 | API field | Raw meaning | Present as |
 |-----------|-------------|------------|
 | `.usd` | 1 wFiat in USD | **1 USD = 1/price_usd {FIAT}** |
-| vs other fiat | 1 wFiat in X | **1 {reference} = 1/price {FIAT}** when useful |
 
 Examples:
 
