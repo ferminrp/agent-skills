@@ -19,6 +19,8 @@ prototipado, open source, pruebas, educación y experimentación.
 - **Rate limit**:
   - CoinGecko: ~10–30 calls/min (compartido por IP, dinámico)
   - GeckoTerminal: ~10 calls/min
+  - **En la práctica (jul 2026)**: ambos límites parecen compartir presupuesto por IP — ráfagas cada 2-3s cortan a 429 mucho antes de los ~10-30/min nominales (a los ~8 requests). Espaciar 6-8s+ entre llamadas es más confiable que confiar en el número nominal. Desde un browser, el 429 a veces aparece como `TypeError: Failed to fetch` en vez de una respuesta HTTP — tratarlo igual.
+- **CORS**: ambos responden `access-control-allow-origin: *` — llamables directo desde `fetch()` client-side sin proxy.
 - **Límite mensual**: no hay cuota mensual estricta como Demo; el cuello es el rate limit por IP.
 - **Catálogo**: 50+ endpoints CoinGecko + 20+ GeckoTerminal (mismo catálogo que Demo, rate más bajo).
 
@@ -41,6 +43,8 @@ prototipado, open source, pruebas, educación y experimentación.
 - `/networks/new_pools`
 - `/networks/{network}/pools/{address}/ohlcv/{timeframe}`
 - `/networks/{network}/pools/{address}/trades`
+- `/networks/{network}/tokens/{address}/pools` — todos los pools de un token
+- `/networks/{network}/tokens/multi/{addresses}` — batch (~30 addresses, coma-separadas) + `?include=top_pools`
 
 ### Ejemplos
 
@@ -51,7 +55,12 @@ curl -s "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page
 
 curl -s "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=30&interval=daily" | jq '.'
 
+curl -s "https://api.coingecko.com/api/v3/coins/bitcoin/tickers?include_exchange_logo=false" | jq '.tickers[] | {market: .market.identifier, vol: .converted_volume.usd, stale: .is_stale}'
+
 curl -s "https://api.geckoterminal.com/api/v2/networks/solana/trending_pools" | jq '.'
+
+# batch: N tokens conocidos en una red, 1 sola llamada
+curl -s "https://api.geckoterminal.com/api/v2/networks/eth/tokens/multi/0xdac17f958d2ee523a2206206994597c13d831ec7,0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48?include=top_pools" | jq '.'
 ```
 
 ### Keyless vs Demo Key (CoinGecko)

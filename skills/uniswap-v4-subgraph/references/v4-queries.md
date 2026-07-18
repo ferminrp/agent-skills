@@ -14,7 +14,10 @@ Overview) and the [v4-subgraph schema](https://github.com/Uniswap/v4-subgraph/bl
 | API keys | https://thegraph.com/studio/apikeys/ |
 | Source | https://github.com/Uniswap/v4-subgraph |
 
-Hosted service endpoints are deprecated. Discover other chain deployments via
+Hosted service endpoints are deprecated. For Base/BNB/Polygon subgraph ids
+(and which chains have **no** public subgraph, e.g. World Chain), see
+"Known deployments by chain" in `SKILL.md` — don't re-derive them here to
+avoid the table drifting out of sync. Discover further chains via
 [The Graph Explorer](https://thegraph.com/explorer).
 
 > Public endpoints in docs are example deployments and may not be maintained by
