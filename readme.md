@@ -11,6 +11,7 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [cotizacion-dolar-argentina](skills/cotizacion-dolar-argentina/) | Consulta cotizaciones de dolar y monedas (EUR/BRL/CLP/UYU) en Argentina usando DolarAPI |
 | [crypto-prices-criptoya](skills/crypto-prices-criptoya/) | Consulta cotizaciones cripto por exchange y agregadas, y fees de retiro, usando CriptoYa API |
 | [coingecko-and-coinmarketcap-apis](skills/coingecko-and-coinmarketcap-apis/) | Consulta precios, markets, histórico y datos DEX keyless de CoinGecko/GeckoTerminal y CoinMarketCap |
+| [uniswap-v4-subgraph](skills/uniswap-v4-subgraph/) | Consulta pools, swaps, tokens, positions y métricas globales de Uniswap v4 vía The Graph subgraph GraphQL |
 | [inflacion-argentina-ipc](skills/inflacion-argentina-ipc/) | Consulta la serie historica y el ultimo dato de IPC/inflacion mensual de Argentina desde Anduin API |
 | [riesgo-pais-argentina](skills/riesgo-pais-argentina/) | Consulta la serie historica y el ultimo dato de riesgo pais de Argentina desde Anduin API |
 | [travel-promos-argentina](skills/travel-promos-argentina/) | Consulta promociones de viajes (vuelos/hoteles/paquetes) y permite filtrarlas/rankearlas usando Anduin API |
