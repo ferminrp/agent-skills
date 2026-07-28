@@ -25,6 +25,7 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [writing-well](skills/writing-well/) | Audit and improve writing quality with a 7-check framework for clarity, concision, evidence, jargon, and flow, including severity-ranked findings and a full rewrite suggestion |
 | [workflowy](skills/workflowy/) | Read and write a Workflowy outline via its official REST API (list/read/export/create/update/move/complete/uncomplete/delete nodes, discover shortcuts/targets) using a Bearer API key from the environment |
 | [product-shaping](skills/product-shaping/) | Guided process for shaping product ideas and specs by surfacing unknowns through research, brainstorm, prototypes, and interviews before anything gets built |
+| [tvmaze-series-tracker](skills/tvmaze-series-tracker/) | Track favorite TV shows via TVmaze: confirm-before-add (poster + synopsis), list/upcoming, silent daily air-day alerts |
 
 ## Installation
 
