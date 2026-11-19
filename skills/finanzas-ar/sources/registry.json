@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0",
+  "registry_version": "1.8.0",
+  "updated": "2026-11-04",
+  "sources": [
+    {
+      "id": "data912",
+      "version": "1",
+      "base_url": "https://data912.com",
+      "kind": "rest",
+      "endpoints": "references/data912.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "cedears",
+      "version": "2",
+      "base_url": "https://cedears.com/mcp",
+      "kind": "mcp",
+      "endpoints": "references/cedears.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "comparapix",
+      "version": "1",
+      "base_url": "https://api.comparapix.ar",
+      "kind": "rest",
+      "endpoints": "references/comparapix.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "argentinadatos",
+      "version": "2",
+      "base_url": "https://api.argentinadatos.com/v1",
+      "kind": "rest",
+      "endpoints": "references/argentinadatos.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "dolarapi",
+      "version": "1",
+      "base_url": "https://dolarapi.com/v1",
+      "kind": "rest",
+      "endpoints": "references/dolarapi.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "monitorargy",
+      "version": "2",
+      "base_url": "https://monitorargy.com/mcp",
+      "kind": "mcp",
+      "endpoints": "references/monitorargy.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "bcra",
+      "version": "2",
+      "base_url": "https://api.bcra.gob.ar",
+      "kind": "rest",
+      "endpoints": "references/bcra.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "criptoya",
+      "version": "1",
+      "base_url": "https://criptoya.com/api",
+      "kind": "rest",
+      "endpoints": "references/criptoya.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "yfinance",
+      "version": "2",
+      "base_url": "~/.finanzas-ar/venv",
+      "kind": "python",
+      "endpoints": "references/yfinance.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "comparatasas",
+      "version": "2",
+      "base_url": "https://api.argentinadatos.com/v1/finanzas",
+      "kind": "rest",
+      "endpoints": "references/comparatasas.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "bondterminal",
+      "version": "1",
+      "base_url": "https://bondterminal.com/api/v1",
+      "kind": "rest",
+      "auth": "api_key (Authorization: Bearer, env BONDTERMINAL_API_KEY)",
+      "endpoints": "references/bondterminal.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "polymarket",
+      "version": "1",
+      "base_url": "https://gamma-api.polymarket.com",
+      "extra_base_urls": [
+        "https://clob.polymarket.com",
+        "https://data-api.polymarket.com"
+      ],
+      "kind": "rest",
+      "auth": "none (public reads only; no trading)",
+      "endpoints": "references/polymarket.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "loguitos",
+      "version": "1",
+      "base_url": "https://loguitos.app/api",
+      "kind": "rest",
+      "endpoints": "references/loguitos.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "comparadolar",
+      "version": "1",
+      "base_url": "https://api.comparadolar.ar",
+      "kind": "rest",
+      "endpoints": "references/comparadolar.md",
+      "added": "2026-10-28",
+      "verified": "2026-10-28"
+    },
+    {
+      "id": "indec",
+      "version": "1",
+      "base_url": "https://api.indec.gob.ar/v1",
+      "kind": "rest",
+      "endpoints": "references/indec.md",
+      "added": "2026-11-02",
+      "verified": "2026-11-02"
+    },
+    {
+      "id": "gallo",
+      "version": "1",
+      "base_url": "https://data.gallofintech.com/api/mcp",
+      "kind": "mcp",
+      "auth": "paid Gallo Fintech account required (MCP auth); some tools Pro/Pro+",
+      "endpoints": "references/gallo.md",
+      "added": "2026-11-04",
+      "verified": "2026-11-04"
+    }
+  ]
+}
