@@ -14,12 +14,8 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [cotizaciones-pix-comparapix](skills/cotizaciones-pix-comparapix/) | Consulta y compara cotizaciones Pix entre apps desde api.comparapix.ar/quotes, con recomendacion de interfaz en comparapix.ar |
 | [cafci-fondos-comunes-argentina](skills/cafci-fondos-comunes-argentina/) | Consulta la API publica oficial de CAFCI para tipos de renta, listado/buscador de fondos, clases, ficha de fondo e informacion diaria por categoria |
 | [dataroma-superinvestors](skills/dataroma-superinvestors/) | Consulta portfolios y movimientos de superinvestors/hedge funds desde DataRoma usando defuddle.md, con salida markdown estructurada para agentes |
-| [dub-links-api](skills/dub-links-api/) | Integra endpoints de Links de Dub (create/update/upsert/delete/get/list/count/bulk) con auth Bearer y alcance exclusivo de Links |
 | [finanzas-ar](skills/finanzas-ar/) | Route Argentine financial data questions (dólar variants, BYMA, CEDEARs, bonds, LECAPs, crypto per exchange, PIX, inflation, UVA, riesgo país, BCRA, FCI, etc.) via a question→source→fallback table, versioned registry, and per-source references |
-| [mapcn](skills/mapcn/) | Technical guide to install and integrate mapcn map components (Map, Controls, Markers, Popups, Routes, Clusters, advanced MapLibre access) in React/shadcn projects |
-| [cloudflare-workers-url-shortner](skills/cloudflare-workers-url-shortner/) | Build and operate a resilient URL shortner on Cloudflare Workers with Upstash Redis + D1, including non-blocking click tracking and alerting |
 | [writing-well](skills/writing-well/) | Audit and improve writing quality with a 7-check framework for clarity, concision, evidence, jargon, and flow, including severity-ranked findings and a full rewrite suggestion |
-| [workflowy](skills/workflowy/) | Read and write a Workflowy outline via its official REST API (list/read/export/create/update/move/complete/uncomplete/delete nodes, discover shortcuts/targets) using a Bearer API key from the environment |
 | [product-shaping](skills/product-shaping/) | Guided process for shaping product ideas and specs by surfacing unknowns through research, brainstorm, prototypes, and interviews before anything gets built |
 | [tvmaze-series-tracker](skills/tvmaze-series-tracker/) | Track favorite TV shows via TVmaze: confirm-before-add (poster + synopsis), list/upcoming, silent daily air-day alerts |
 
