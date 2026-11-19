@@ -9,7 +9,7 @@ Verified 2026-10-28 (HTTP 200): /usd, /usd/providers, /usd/providers/{slug}/hist
 |---|---|---|
 | /usd | USD quotes per provider (29 on 2026-10-28: 15 Oficial, 3 MEP, 5 CCL, 6 Cripto; 11 banks) | slug, prettyName, bid (you sell), ask (you buy) ARS/USD, usdType (Oficial/MEP/CCL/Cripto), isBank, is24x7, pct_variation (% daily), lastSeenAt (ISO UTC), stale, logoUrl, url (referral), conditions |
 | /usd/providers | provider metadata, no prices | slug, prettyName, logoUrl, usdType, isBank, is24x7, url, conditions |
-| /usd/providers/{slug}/history | per-provider series (since ~2026-07-30, ~intraday points) | bid, ask, timestamp (UTC) |
+| /usd/providers/{slug}/history | per-provider series (~intraday points; start varies per provider: on 2026-11-19 astropay/banco-nacion from 2026-08-21, balanz 2026-08-24, banco-bica 2026-09-10 — looks like a rolling ~90-day window) | bid, ask, timestamp (UTC) |
 | /usdt, /usdc, /btc, /eth | crypto quotes per exchange in ARS (e.g. Belo, Binance, Astropay) | slug, prettyName, bid, ask, totalBid, totalAsk, logo, lastSeenAt, stale, url, conditions |
 | /{coin}/providers, /{coin}/providers/{slug}/history | crypto metadata / series | ask, totalAsk, bid, totalBid, timestamp |
 | /health | liveness | `{"status":"ok"}` |

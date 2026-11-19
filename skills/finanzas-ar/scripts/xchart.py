@@ -1,4 +1,4 @@
-"""xchart v2: gráficos estáticos para X/Twitter (lecciones de stageshow incluidas).
+"""xchart v2: gráficos estáticos para X/Twitter (reglas en references/charts.md).
 
     from xchart import figure, finish, label, stat, phone_sheet
     fig, ax = figure()                       # light (default): suelo gris claro + panel blanco
@@ -33,10 +33,23 @@ T = THEMES["light"]
 GUTTER = 0.035  # un solo gutter (fracción del ancho), usado en todos los bordes
 
 
+# Carpetas donde buscar Pretendard (.otf/.ttf estáticos): env FINANZAS_AR_FONT_DIR primero
+# (admite varias separadas por os.pathsep), después rutas conocidas. Si no hay, DejaVu Sans
+# (viene con matplotlib).
+FONT_DIRS = [d for d in os.environ.get("FINANZAS_AR_FONT_DIR", "").split(os.pathsep) if d] + [
+    str(Path.home() / ".finanzas-ar" / "fonts"),
+    "/usr/share/fonts/truetype/sand-box/custom/Pretendard",
+]
+
+
 def _font():
-    for f in Path("/usr/share/fonts/truetype/sand-box/custom/Pretendard").glob("*.otf"):
-        try: fm.fontManager.addfont(str(f))
-        except Exception: pass
+    for d in FONT_DIRS:
+        p = Path(d).expanduser()
+        if not p.is_dir():
+            continue
+        for f in [*p.glob("*.otf"), *p.glob("*.ttf")]:
+            try: fm.fontManager.addfont(str(f))
+            except Exception: pass
     return "Pretendard" if "Pretendard" in {f.name for f in fm.fontManager.ttflist} else "DejaVu Sans"
 FONT = _font()
 

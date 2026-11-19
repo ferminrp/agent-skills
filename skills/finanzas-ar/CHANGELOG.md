@@ -22,7 +22,7 @@
 ## 1.4.0 — 2026-10-28
 - Added loguitos (v1): Argentine provider logos and flags, public, no auth. GET https://loguitos.app/api/logos (q, domain, category, limit ≤200, offset); returns Google/DDG favicon URLs and flag SVGs. No size/format/dark params. Verified live 2026-10-28 (Galicia, Mercado Pago, Binance, Ripio, BBVA, AR flag).
 - Rule: visual pieces (dashboards, Pages, charts) that need provider logos use loguitos; if missing, initials or plain text, never an invented logo. Routing row for logos.
-- Polymarket: every polymarket.com link shown (chat, Pages, alerts, recipes) carries `via=oraculo.ar` (`?`/`&`). Updated references/polymarket.md (Links section), SKILL.md rule, and the getting-started Polymarket recipe alert link.
+- Polymarket: every polymarket.com link shown (chat, Pages, alerts, recipes) carries `via=oraculo.ar` (`?`/`&`). Updated references/polymarket.md (Links section), SKILL.md rule, and the getting-started Polymarket recipe alert link (that recipe is not part of this skill; the rule lives in references/polymarket.md "Links (attribution)" and SKILL.md).
 ## 1.3.0 — 2026-10-28
 - Added polymarket (v1): public prediction-market reads, no auth. Gamma (events/markets by slug, public-search), CLOB (midpoint, price, spread, last-trade-price, book, batch midpoints/prices, prices-history), Data API (v2/prices-history, oi, holders, trades). All dry-run live 2026-10-28.
 - Notes: outcomes/outcomePrices/clobTokenIds are JSON strings; CLOB history `market` = token id; Cloudflare IP throttling (Gamma /events 500 req/10s, CLOB /prices-history 1,000/10s).

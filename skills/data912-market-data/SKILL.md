@@ -20,7 +20,7 @@ Query Data912's public market API for Argentina and USA market data snapshots, h
 - **Auth**: None required (public API)
 - **Format**: JSON responses
 - **Source note**: Data912 describes this API as educational/hobby data and explicitly not real-time.
-- **Caching note**: Server metadata indicates roughly 2-hour Cloudflare caching.
+- **Freshness/caching note**: The spec says live endpoints are "Not real time, endpoints data refreshed every 20 seconds". Responses are cached by Cloudflare: `cache-control: public, max-age=30` on `/live/*` and `max-age=3600` (1 hour) on `/historical/*` and `/eod/*`.
 
 ## Endpoint Groups
 
@@ -52,8 +52,10 @@ curl -s "https://data912.com/live/arg_stocks" | jq '.[0:5]'
 Example:
 
 ```bash
-curl -s "https://data912.com/historical/stocks/GGAL" | jq '.[0:10]'
+curl -s "https://data912.com/historical/stocks/GGAL" | jq '.[-10:]'
 ```
+
+Historical series are sorted ascending by `date` (oldest first; GGAL starts in 2001), so use `.[-10:]` for the most recent bars, not `.[0:10]`.
 
 ### 3. EOD Derivatives Analytics
 
@@ -89,7 +91,7 @@ curl -s "https://data912.com/eod/option_chain/AAPL" | jq '.[0:10]'
 - `o`, `h`, `l`, `c`: OHLC values
 - `v`: volume
 - `dr`: daily return
-- `sa`: additional numeric metric provided by source
+- `sa`: sigma annualized (annualized volatility, as a decimal, e.g. `0.44` = 44%)
 
 ### Volatility Metrics (`/eod/volatilities/{ticker}`)
 
@@ -118,8 +120,9 @@ curl -s "https://data912.com/eod/option_chain/AAPL" | jq '.[0:10]'
    - For historical/EOD endpoints, require a ticker symbol.
    - If ticker is missing, ask for it before querying.
 3. **Fetch data with `curl -s`** and parse with `jq`.
-4. **Handle empty arrays**:
+4. **Handle empty or unknown-ticker responses**:
    - If response is `[]`, report: "No data currently available for this endpoint/ticker."
+   - An unknown ticker on `/historical/*/{ticker}` returns **HTTP 200** with a JSON object instead of an array, e.g. `{"Error":"Nahh no tengo ese ticker loko"}`. Detect it with `jq 'type == "object" and has("Error")'` and report that the ticker was not found.
 5. **Present an actionable summary**:
    - Start with a short snapshot.
    - Then include relevant detail fields requested by the user.
@@ -132,9 +135,11 @@ curl -s "https://data912.com/eod/option_chain/AAPL" | jq '.[0:10]'
 - **429 Too Many Requests**:
   - Most market endpoints publish `120 req/min`.
   - Back off and retry after a short delay; avoid burst loops.
+- **Unknown ticker (HTTP 200 + `Error` key)**:
+  - Not a 422 and not `[]`: the body is an object like `{"Error":"Nahh no tengo ese ticker loko"}`.
+  - Check for an object with an `Error` key before parsing as an array; re-check the symbol and the endpoint group (stocks vs cedears vs bonds).
 - **422 Validation Error**:
-  - Usually invalid/missing path input such as ticker formatting.
-  - Re-check symbol and endpoint before retrying.
+  - Documented in the spec for malformed path input; re-check symbol and endpoint before retrying.
 - **Network/timeout failures**:
   - Retry a small number of times (for example, 2 retries with delay).
   - If still failing, return a clear failure message and the endpoint attempted.

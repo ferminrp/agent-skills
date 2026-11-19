@@ -1,5 +1,5 @@
 # data912 (REST) — v1
-Base: https://data912.com · Auth: none · Docs: /openapi.json, /docs. "Educational, not real-time" (~20 min delay). Rate limit not published; cache ≥60 s.
+Base: https://data912.com · Auth: none · Docs: /openapi.json, /docs. "Educational, not real-time": data refreshed ~every 20 s (spec: "Not real time, endpoints data refreshed every 20 seconds"). Cloudflare cache: `max-age=30` on /live/*, `max-age=3600` (1 h) on /historical/* and /eod/*. Rate limit 120 req/min (per spec).
 All 15 GET endpoints verified 2026-10-28 (HTTP 200).
 
 ## Live panels (array of rows)
@@ -16,7 +16,8 @@ Fields: symbol, q_bid, px_bid, px_ask, q_ask, v (volume), q_op (trades), c (last
 
 ## Historical daily OHLC (array)
 - /historical/stocks/{ticker} · /historical/cedears/{ticker} · /historical/bonds/{ticker}
-Fields: date, o, h, l, c, v, dr (daily return), sa (annualized vol)
+Fields: date, o, h, l, c, v, dr (daily return), sa (sigma annualized = annualized vol, decimal). Sorted ascending (oldest first): use `.[-N:]` for latest bars.
+Unknown ticker → HTTP 200 with `{"Error":"Nahh no tengo ese ticker loko"}` (object, not array): check for an `Error` key.
 
 ## EOD options
 - /eod/volatilities/{ticker} — iv_s_term, iv_m_term, iv_l_term + *_percentile, ...

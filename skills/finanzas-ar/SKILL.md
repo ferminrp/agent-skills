@@ -4,7 +4,7 @@ description: Use for any Argentine financial data question — dólar (oficial, 
 ---
 # Finanzas AR data
 
-Sources live in `sources/registry.json`; details per source in `references/<id>.md`. Read the reference before calling a source. All sources are free; bondterminal needs a free API key (env BONDTERMINAL_API_KEY, 25 calcs + 200 read units/day) and indec a free JWT (env INDEC_API_TOKEN, else file ~/.finanzas-ar/secrets/indec_token; never print it). gallo needs a paid Gallo Fintech account (MCP connector); if not connected, use the fallback. If the key/token is unset, use the fallback.
+Sources live in `sources/registry.json`; details per source in `references/<id>.md`. Read the reference before calling a source. All sources are free except gallo (paid); bondterminal needs a free API key (env BONDTERMINAL_API_KEY, 25 calcs + 200 read units/day) and indec a free JWT (env INDEC_API_TOKEN, else file ~/.finanzas-ar/secrets/indec_token; never print it). gallo needs a paid Gallo Fintech account (MCP connector); if not connected, use the fallback. If the key/token is unset, use the fallback.
 
 ## Routing
 | Question | Best | Fallback |
@@ -13,7 +13,7 @@ Sources live in `sources/registry.json`; details per source in `references/<id>.
 | Dólar headline reference (oficial/blue/MEP/CCL/cripto/tarjeta averages) | dolarapi `/dolares` | criptoya `/dolar` |
 | Dólar history | argentinadatos `/cotizaciones/dolares/{casa}` | bcra cambiarias (official only) |
 | Dólar history per provider | comparadolar `/usd/providers/{slug}/history` | — |
-| USD per bank | comparadolar `/usd` (`isBank`) | criptoya `/bancostodos` |
+| USD per bank | comparadolar `/usd` (`isBank`) | criptoya `/bancostodos` (drop banks whose `time` is > 24 h old) |
 | Other currencies vs ARS / other countries | dolarapi `/cotizaciones`, `{cl,uy,mx,ve,co}.dolarapi.com` | bcra cambiarias `Cotizaciones` |
 | Real-time crypto per exchange (USDT/USDC/BTC/ETH in ARS) | criptoya `/{coin}/ars/{vol}` | comparadolar `/{usdt,usdc,btc,eth}` (second view), then dolarapi `/dolares/cripto` |
 | Real-time reales con PIX / pay in Brazil | comparapix `api.comparapix.ar/quotes` or comparapix MCP | criptoya `/usdt/brl/100` |
@@ -23,7 +23,7 @@ Sources live in `sources/registry.json`; details per source in `references/<id>.
 | Earnings calendar | cedears MCP `earnings` | — |
 | Price history / OHLC | data912 `/historical/*` | yfinance |
 | Option IV / chain | data912 `/eod/*` | — |
-| Inflation (IPC nivel general) | indec `/ipc_nacional` `region=eq.Nacional&codigo=eq.0` (token) | argentinadatos `/finanzas/indices/inflacion`, then monitorargy MCP |
+| Inflation (IPC nivel general) | indec `/ipc_nacional` `region=eq.Nacional&codigo=eq.0&tipo_de_indicador=eq.v_m` (token) | argentinadatos `/finanzas/indices/inflacion`, then monitorargy MCP |
 | UVA, riesgo país | argentinadatos `/finanzas/indices/*` | monitorargy MCP |
 | Plazo fijo, FCI, wallet yields, UVA mortgages | argentinadatos `/finanzas/tasas`, `/fci`, `/rendimientos`, `/creditos` | — |
 | Reserves, base monetaria, BCRA rates | bcra `estadisticas/v4.0/Monetarias` | monitorargy MCP |
@@ -44,12 +44,12 @@ Sources live in `sources/registry.json`; details per source in `references/<id>.
 | Quick KPI snapshot (oficial/MEP/CCL, riesgo país, inflación, best plazo fijo TNA) | dolarapi + argentinadatos | gallo `get_kpis` (paid) |
 | Cheque denunciado / deudores (user's own CUIT) | bcra cheques / centraldedeudores | — |
 | Feriados | argentinadatos `/feriados/{año}` | — |
-| Best FCI / money market by TNA | comparatasas `/fci/comparatasas` (`rendimientos.tnaEstimada`) | argentinadatos `/fci/mercadoDinero/ultimo` |
+| Best FCI / money market by TNA | comparatasas `/fci/comparatasas` (`rendimientos.tnaEstimada`) | argentinadatos `/fci/mercadoDinero/ultimo` (keep only rows with the latest `fecha`) |
 | Best cuenta remunerada / billetera, USD accounts | comparatasas `/fci/otros/ultimo`, `/cuentas-remuneradas-usd/` | — |
 | LECAPs, bonos CER, cauciones (rates/TIR) | comparatasas `/letras`, `/bonos-cer`, `/cauciones/{ars|usd}` | data912 |
 | Crypto yields, criptopesos | comparatasas `/rendimientos`, `/criptopesos/` | criptoya |
 | Watchlist / quick quote any ticker | yfinance `yf_quote.py` | data912 |
-| Bond TIR, duration, convexity, spreads (hard-dollar AL/GD, ONs) | bondterminal `/bonds/{id}/analytics` | data912 `/live/arg_bonds` (price only) + comparatasas `/bonds-cer` (CER TIR) |
+| Bond TIR, duration, convexity, spreads (hard-dollar AL/GD, ONs) | bondterminal `/bonds/{id}/analytics` | data912 `/live/arg_bonds` (price only) + comparatasas `/bonos-cer` (CER TIR) |
 | Bond cashflows (cupones/amortizaciones) | bondterminal `/bonds/{id}/cashflows` | gallo `get_bono_payments` (paid) |
 | Price → TIR / TIR → price what-if | bondterminal `POST /calculate` | — |
 | Bond prices (watchlist, analytics) | bondterminal `POST /bonds/batch` | data912 `/live/*` |
@@ -68,7 +68,7 @@ Sources live in `sources/registry.json`; details per source in `references/<id>.
 - Always state source and its timestamp; convert UTC to Buenos Aires time.
 - Real-time quotes (dólar, reales con PIX, cripto): always name the app/provider each price comes from (e.g. "Belo vía comparadolar", "Binance vía criptoya"); when several options exist, list the best few by ask (to buy) / bid (to sell) instead of a single number; cite source + Buenos Aires time; skip or flag stale quotes.
 - indec: max 1000 rows per call; paginate with limit/offset ordered by the full key; `observaciones`/`*_null` carry INDEC signs (* provisorio, s secreto…). `/indice_salarios.valor` is a string with decimal comma. Only the Bearer header is needed.
-- data912 is delayed (~20 min). BCRA v3 is deprecated (410): use v4.
+- data912 is not real-time: data refreshed ~every 20 s, Cloudflare cache 30 s on `/live/*` and 1 h on `/historical/*`, `/eod/*`. BCRA v3 is deprecated (410): use v4.
 - If a source fails, use the fallback and say so.
 - MCP sources: POST JSON-RPC with `Accept: application/json, text/event-stream`.
 - yfinance: run `setup/setup.sh` once; then `~/.finanzas-ar/venv/bin/python ~/.finanzas-ar/yf_quote.py T1 T2`.

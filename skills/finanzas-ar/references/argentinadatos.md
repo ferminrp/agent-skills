@@ -11,7 +11,7 @@ All below verified 2026-10-28 (HTTP 200).
 | /finanzas/indices/uva | fecha, valor |
 | /finanzas/indices/riesgo-pais , /riesgo-pais/ultimo | fecha, valor (bps) |
 | /finanzas/tasas/plazoFijo | entidad, logo, tnaClientes, tnaNoClientes, enlace, tasas[] |
-| /finanzas/tasas/depositos30Dias | fecha, valor (decimal) |
+| /finanzas/tasas/depositos30Dias | fecha, valor (TNA; **unit changes**, see below) |
 | /finanzas/rendimientos | entidad, rendimientos[{moneda, apy, fecha}] (crypto/wallet yields) |
 | /finanzas/fci/{mercadoDinero,rentaVariable,rentaFija,rentaMixta}/{ultimo,penultimo} | fondo, horizonte, fecha, vcp, ccp, patrimonio |
 | /finanzas/fci/otros/ultimo | fondo, tna, tea, tope, fecha, condiciones, plazoMinDias (wallet accounts) |
@@ -23,6 +23,9 @@ All below verified 2026-10-28 (HTTP 200).
 | /estado | {estado} |
 
 All verified 2026-10-28, including the dated routes.
+
+**depositos30Dias unit** (verified 2026-11-19): decimal up to 2025-01-21 (`0.3039` = 30.39 %), percentage from 2025-01-22 (`30.34`). Also 15 isolated days in 2024-08/2025-01 already in %. Decimals reach 1.30 (TNA > 100 % in 2023-24), so `valor > 1` is not a safe test; percentages never go below ~19. Normalize with `if valor > 5 then valor/100 else valor` (→ decimal).
+`/fci/{tipo}/ultimo` mixes funds with stale `fecha` (years old) with the latest day: keep only rows with the max `fecha` (or within a few days of it).
 
 ```
 curl -s https://api.argentinadatos.com/v1/finanzas/indices/inflacion | jq '.[-12:]'
