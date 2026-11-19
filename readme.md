@@ -12,8 +12,6 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [crypto-prices-criptoya](skills/crypto-prices-criptoya/) | Consulta cotizaciones cripto por exchange y agregadas, y fees de retiro, usando CriptoYa API |
 | [coingecko-and-coinmarketcap-apis](skills/coingecko-and-coinmarketcap-apis/) | Consulta precios, markets, histórico y datos DEX keyless de CoinGecko/GeckoTerminal y CoinMarketCap |
 | [cotizaciones-pix-comparapix](skills/cotizaciones-pix-comparapix/) | Consulta y compara cotizaciones Pix entre apps desde api.comparapix.ar/quotes, con recomendacion de interfaz en comparapix.ar |
-| [cafci-fondos-comunes-argentina](skills/cafci-fondos-comunes-argentina/) | Consulta la API publica oficial de CAFCI para tipos de renta, listado/buscador de fondos, clases, ficha de fondo e informacion diaria por categoria |
-| [dataroma-superinvestors](skills/dataroma-superinvestors/) | Consulta portfolios y movimientos de superinvestors/hedge funds desde DataRoma usando defuddle.md, con salida markdown estructurada para agentes |
 | [finanzas-ar](skills/finanzas-ar/) | Route Argentine financial data questions (dólar variants, BYMA, CEDEARs, bonds, LECAPs, crypto per exchange, PIX, inflation, UVA, riesgo país, BCRA, FCI, etc.) via a question→source→fallback table, versioned registry, and per-source references |
 | [writing-well](skills/writing-well/) | Audit and improve writing quality with a 7-check framework for clarity, concision, evidence, jargon, and flow, including severity-ranked findings and a full rewrite suggestion |
 | [product-shaping](skills/product-shaping/) | Guided process for shaping product ideas and specs by surfacing unknowns through research, brainstorm, prototypes, and interviews before anything gets built |
