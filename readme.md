@@ -11,7 +11,6 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 | [cotizacion-dolar-argentina](skills/cotizacion-dolar-argentina/) | Consulta cotizaciones de dolar y monedas (EUR/BRL/CLP/UYU) en Argentina usando DolarAPI |
 | [crypto-prices-criptoya](skills/crypto-prices-criptoya/) | Consulta cotizaciones cripto por exchange y agregadas, y fees de retiro, usando CriptoYa API |
 | [coingecko-and-coinmarketcap-apis](skills/coingecko-and-coinmarketcap-apis/) | Consulta precios, markets, histórico y datos DEX keyless de CoinGecko/GeckoTerminal y CoinMarketCap |
-| [travel-promos-argentina](skills/travel-promos-argentina/) | Consulta promociones de viajes (vuelos/hoteles/paquetes) y permite filtrarlas/rankearlas usando Anduin API |
 | [cotizaciones-pix-comparapix](skills/cotizaciones-pix-comparapix/) | Consulta y compara cotizaciones Pix entre apps desde api.comparapix.ar/quotes, con recomendacion de interfaz en comparapix.ar |
 | [cafci-fondos-comunes-argentina](skills/cafci-fondos-comunes-argentina/) | Consulta la API publica oficial de CAFCI para tipos de renta, listado/buscador de fondos, clases, ficha de fondo e informacion diaria por categoria |
 | [dataroma-superinvestors](skills/dataroma-superinvestors/) | Consulta portfolios y movimientos de superinvestors/hedge funds desde DataRoma usando defuddle.md, con salida markdown estructurada para agentes |
