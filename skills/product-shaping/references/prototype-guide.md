@@ -9,7 +9,7 @@ The prototype exists to trigger reactions, not to demo. Its job is to convert un
 - **Genuinely divergent directions.** 3–4 variants that differ in mechanism or mental model, not in color scheme. If a viewer can't say in one sentence how variant B differs from A, they're not different enough.
 - **Easy comparison.** Tabs or a switcher at the top, one variant visible at a time, labeled with a short name and a one-line thesis (e.g. "Direction B: the feed IS the product").
 - **Interactive only where it changes understanding.** Fake a click-through if the flow is the thing being evaluated; keep it static if layout is the question. Don't wire up anything real.
-- **No backend, no state, no localStorage.** It's a sketch.
+- **No backend, no persistence.** In-memory state with inline JS is fine (switching tabs, advancing a fake flow, toggling a filter) and resets on reload. Not allowed: network calls, APIs, servers, `localStorage`/`sessionStorage`/IndexedDB, cookies. It's a sketch.
 
 ## Prompting reactions
 

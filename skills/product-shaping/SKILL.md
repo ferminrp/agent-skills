@@ -36,7 +36,9 @@ From their answers, draft the initial unknowns log (all four quadrants) and shar
 
 ### Phase 1 — Blind Spot Pass (unknown unknowns)
 
-Research what the user doesn't know to ask about. Depending on the problem, this can include: competitor and comparable-product research (use web search), common failure modes for this kind of feature, regulatory/compliance angles, adjacent solutions to the same job-to-be-done, and what "great" looks like in this category.
+Research what the user doesn't know to ask about. Depending on the problem, this can include: competitor and comparable-product research (use web search if available), common failure modes for this kind of feature, regulatory/compliance angles, adjacent solutions to the same job-to-be-done, and what "great" looks like in this category.
+
+If no web search tool is available, say so up front and work from prior knowledge, explicitly marking those findings as unverified and possibly outdated (e.g. "from memory, not checked") so the user knows what to confirm.
 
 Then *teach*, don't dump: explain the 3–6 most decision-relevant findings in plain language, each ending with the question it raises for their product. The goal is to upgrade the user's ability to shape, not to show research volume.
 
@@ -46,7 +48,7 @@ Skip or shorten this phase if the user is a domain expert shaping in familiar te
 
 Generate genuinely divergent options for the user to react to. Reactions are how "I'll know it when I see it" criteria get verbalized.
 
-- Propose 3–5 distinct product directions, ordered cheapest → most ambitious. Make them *actually different* — different mechanisms, not the same idea at three sizes.
+- Propose 3–4 distinct product directions, ordered cheapest → most ambitious. Make them *actually different* — different mechanisms, not the same idea at three sizes.
 - For anything with a user-facing surface, offer an HTML prototype: a single self-contained HTML file with fake data showing the different directions side by side (tabs or stacked sections) so the user can compare. See [prototype-guide.md](references/prototype-guide.md) before building it.
 - Ask the user to react: what resonates, what's off, what surprised them. Capture *why* — the reasons are the hidden criteria. Add each verbalized criterion to the unknowns log as a new known known.
 
@@ -62,7 +64,7 @@ Stop when remaining unknowns wouldn't change the shape — mark those as "deferr
 
 ### Phase 5 — Write the shaping doc
 
-Write the deliverable using the template in [shaping-doc-template.md](references/shaping-doc-template.md). Save it as a markdown file. Key qualities:
+Write the deliverable using the template in [shaping-doc-template.md](references/shaping-doc-template.md). Save it as a markdown file (`shaping-doc.md`) in the current working directory unless the user names another location; if there's no obvious working directory (e.g. a chat-only environment), ask where to save it. Key qualities:
 
 - **Shaped, not specified**: define the problem, the solution's core mechanism, and the boundaries — at "fat marker" fidelity. Leave implementation detail to whoever builds it; over-specifying reintroduces the too-rigid failure mode.
 - The **unknowns log** goes in the doc: decisions made (with the reasoning), deferred unknowns, and explicit no-gos. This is what makes the doc useful to an agent or teammate who inherits it — they know where they may improvise and where they may not.
@@ -80,7 +82,7 @@ Before closing, verify the shape actually matches the user's head:
 - Be a thought partner, not a stenographer. If the research or brainstorm suggests the user is solving the wrong problem, say so early — pivoting during shaping is cheap, pivoting during build is not.
 - Keep the unknowns log visible and current; it's the session's shared state.
 - Don't run the full process ceremonially on small ideas. A tiny feature might need only Phase 0, three interview questions, and a one-page doc. Match process weight to appetite.
-- Deliverables are files, not chat text: `shaping-doc.md` always; `prototype.html` when there's a user-facing surface.
+- Deliverables are files, not chat text: `shaping-doc.md` always; `prototype.html` when there's a user-facing surface. Save both in the current working directory (or wherever the user asks).
 
 ## Additional resources
 

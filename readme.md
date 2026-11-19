@@ -25,13 +25,29 @@ A collection of skills for AI coding agents (Claude Code, Cursor, etc.) that ext
 npx skills add ferminrp/agent-skills
 ```
 
-### Claude Code (local `.skill` file)
+### Claude Code (manual copy)
+
+Copy the skill folder into your skills directory:
 
 ```bash
-claude install-skill /path/to/skill-name.skill
+# Personal (available in all your projects)
+mkdir -p ~/.claude/skills
+cp -r skills/skill-name ~/.claude/skills/
+
+# Project-only (commit it with your repo)
+mkdir -p .claude/skills
+cp -r skills/skill-name .claude/skills/
 ```
 
-Or install from the `.skill` file in [Releases](../../releases).
+### Claude.ai (upload)
+
+Zip the skill folder so the archive contains `skill-name/SKILL.md`, then upload it in claude.ai under Settings > Capabilities (Skills section):
+
+```bash
+cd skills && zip -r ../skill-name.zip skill-name/
+```
+
+A prebuilt package for `bcra-central-deudores` is available in [`dist/`](dist/) (`.skill` files are plain zip archives; rename to `.zip` if the uploader requires it).
 
 ## Contributing
 
