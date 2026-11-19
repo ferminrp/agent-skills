@@ -13,8 +13,8 @@ Commands:
   show <id>
   list | add <id> [--nick ...] | remove <key>
   today [--date YYYY-MM-DD]
-  upcoming [--days N]
-  check [--date YYYY-MM-DD] [--force]   # cron: silent if nothing new
+  upcoming [--days N]                   # N days, today included
+  check [--date YYYY-MM-DD] [--force]   # cron: silent if nothing new; --force = dry-run (no state written)
 """
 from __future__ import annotations
 
@@ -92,12 +92,10 @@ def _get(path: str, params: dict | None = None, retries: int = 3) -> Any:
 
 
 def load_shows() -> dict:
-    state_dir, shows_path, _ = _paths()
-    state_dir.mkdir(parents=True, exist_ok=True)
+    # Read-only: shows.json is only created by save_shows() (i.e. on `add`/`remove`).
+    _, shows_path, _ = _paths()
     if not shows_path.exists():
-        data = {"version": 1, "shows": [], "updated_at": None}
-        save_shows(data)
-        return data
+        return {"version": 1, "shows": [], "updated_at": None}
     return json.loads(shows_path.read_text())
 
 
@@ -129,7 +127,7 @@ def today_local() -> date:
     return datetime.now(_env_tz()).date()
 
 
-def search_shows(query: str, limit: int = 8) -> list[dict]:
+def search_shows(query: str, limit: int = 5) -> list[dict]:
     rows = _get("/search/shows", {"q": query}) or []
     out = []
     for row in rows[:limit]:
@@ -274,14 +272,11 @@ def collect_for_date(day: date, shows: list[dict] | None = None) -> list[dict]:
 
 
 def _local_time_label(ep: dict) -> str:
+    # `airtime` is the network's local broadcast time. When it is empty (typical for
+    # streaming drops) TVmaze's `airstamp` is only a placeholder (e.g. 12:00 UTC),
+    # so no time is shown rather than a misleading one.
     if ep.get("airtime"):
         return f" · {ep['airtime']}"
-    if ep.get("airstamp"):
-        try:
-            dt = datetime.fromisoformat(ep["airstamp"].replace("Z", "+00:00")).astimezone(_env_tz())
-            return f" · {dt.strftime('%H:%M')}"
-        except Exception:
-            return ""
     return ""
 
 
@@ -290,7 +285,8 @@ def format_alert(day: date, hits: list[dict]) -> str:
         return ""
     weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    head = f"TV shows today — {weekdays[day.weekday()]} {day.day} {months[day.month]}"
+    label = f"{weekdays[day.weekday()]} {day.day} {months[day.month]}"
+    head = f"TV shows today — {label}" if day == today_local() else f"TV shows on {label}"
     lines = [head, ""]
     for h in hits:
         sh, ep = h["show"], h["episode"]
@@ -308,11 +304,12 @@ def format_alert(day: date, hits: list[dict]) -> str:
 
 
 def format_upcoming(days: int = 14) -> str:
+    """Episodes airing in the next `days` days, today included (today .. today+days-1)."""
     data = load_shows()
     if not data["shows"]:
         return "No tracked shows. Add one after confirming the TVmaze match."
     start = today_local()
-    end = start + timedelta(days=days)
+    end = start + timedelta(days=days - 1)
     rows: list[tuple[str, str, str, str]] = []
     for s in data["shows"]:
         time.sleep(0.15)
@@ -332,7 +329,7 @@ def format_upcoming(days: int = 14) -> str:
     rows.sort()
     if not rows:
         return f"Nothing in the next {days} days among tracked shows."
-    lines = [f"Upcoming episodes ({days}d)", ""]
+    lines = [f"Upcoming episodes (next {days} days, today included)", ""]
     cur = None
     for ad, name, code, title in rows:
         if ad != cur:
@@ -345,15 +342,24 @@ def format_upcoming(days: int = 14) -> str:
 
 
 def cmd_check(args: argparse.Namespace) -> int:
-    day = date.fromisoformat(args.date) if args.date else today_local()
+    day = args.date or today_local()
     data = load_shows()
     if not data["shows"]:
         return 0
 
     hits = collect_for_date(day, data["shows"])
+
+    if args.force:
+        # Dry-run: ignore dedupe and never touch alerts.json, so a test run
+        # does not silence the real alert later.
+        if hits:
+            sys.stdout.write(format_alert(day, hits))
+        return 0
+
     st = load_alert_state()
     notified: dict = st.setdefault("notified_episode_ids", {})
-    cutoff = (day - timedelta(days=60)).isoformat()
+    # Prune by the real local date (not --date) so back/forward-dated runs don't wipe the map.
+    cutoff = (today_local() - timedelta(days=60)).isoformat()
     notified = {k: v for k, v in notified.items() if isinstance(v, str) and v >= cutoff}
     st["notified_episode_ids"] = notified
 
@@ -367,7 +373,7 @@ def cmd_check(args: argparse.Namespace) -> int:
     fresh = []
     for h in hits:
         eid = str(h["episode"]["id"])
-        if eid in notified and not args.force:
+        if eid in notified:
             continue
         fresh.append(h)
         notified[eid] = day.isoformat()
@@ -384,13 +390,30 @@ def cmd_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def _iso_date(value: str) -> date:
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"invalid date {value!r}, expected YYYY-MM-DD") from None
+
+
+def _positive_int(value: str) -> int:
+    try:
+        n = int(value)
+    except ValueError:
+        n = 0
+    if n < 1:
+        raise argparse.ArgumentTypeError(f"expected a positive integer, got {value!r}")
+    return n
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description="TVmaze favorites tracker for agents")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     ps = sub.add_parser("search")
     ps.add_argument("query")
-    ps.add_argument("--limit", type=int, default=5)
+    ps.add_argument("--limit", type=_positive_int, default=5)
 
     psh = sub.add_parser("show")
     psh.add_argument("id", type=int)
@@ -405,14 +428,14 @@ def main(argv: list[str] | None = None) -> int:
     pr.add_argument("key")
 
     pt = sub.add_parser("today")
-    pt.add_argument("--date")
+    pt.add_argument("--date", type=_iso_date, help="YYYY-MM-DD (default: today in TVMAZE_TZ_OFFSET)")
 
     pu = sub.add_parser("upcoming")
-    pu.add_argument("--days", type=int, default=14)
+    pu.add_argument("--days", type=_positive_int, default=14, help="window length in days, today included")
 
     pc = sub.add_parser("check")
-    pc.add_argument("--date")
-    pc.add_argument("--force", action="store_true")
+    pc.add_argument("--date", type=_iso_date, help="YYYY-MM-DD (default: today in TVMAZE_TZ_OFFSET)")
+    pc.add_argument("--force", action="store_true", help="dry-run: ignore dedupe and write no state")
 
     args = p.parse_args(argv)
 
@@ -445,7 +468,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.cmd == "today":
-        day = date.fromisoformat(args.date) if args.date else today_local()
+        day = args.date or today_local()
         hits = collect_for_date(day)
         msg = format_alert(day, hits)
         if msg:

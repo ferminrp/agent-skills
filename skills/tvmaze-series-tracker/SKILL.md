@@ -52,10 +52,10 @@ Full endpoint notes: [references/tvmaze-api.md](references/tvmaze-api.md).
 
 ## Portable script
 
-Bundled CLI (Python 3 stdlib only — no pip deps):
+Bundled CLI (Python 3 stdlib only — no pip deps). All commands below are written relative to this skill's directory (the folder containing this `SKILL.md`); run them from there, or prefix `scripts/tvmaze_tracker.py` with the skill's full path:
 
 ```bash
-python skills/tvmaze-series-tracker/scripts/tvmaze_tracker.py <command>
+python3 scripts/tvmaze_tracker.py <command>
 ```
 
 Environment (optional):
@@ -63,37 +63,39 @@ Environment (optional):
 | Variable | Default | Meaning |
 |----------|---------|---------|
 | `TVMAZE_STATE_DIR` | `./.tvmaze-state` (cwd) | Directory for JSON state |
-| `TVMAZE_TZ_OFFSET` | `-3` | Hours from UTC for “today” and local clock display (e.g. Argentina = `-3`) |
+| `TVMAZE_TZ_OFFSET` | `-3` | Hours from UTC used to decide what “today” is (e.g. Argentina = `-3`) |
 | `TVMAZE_USER_AGENT` | `agent-skills-tvmaze-tracker/1.0` | HTTP User-Agent |
 
 State files inside `TVMAZE_STATE_DIR`:
 
-- `shows.json` — tracked favorites (`id`, `name`, `nick`, `network`, `image_medium`, `url`, `added_at`)
-- `alerts.json` — dedupe map of notified `episode.id` → air date
+- `shows.json` — tracked favorites (`id`, `name`, `nick`, `status`, `network`, `image_medium`, `url`, `added_at`). Created on the first `add`; read-only commands (`list`, `today`, `upcoming`, `check`) never create it
+- `alerts.json` — dedupe map of notified `episode.id` → air date (written only by `check` without `--force`; entries older than 60 days are pruned)
 
 ### Commands
 
 ```bash
-# Search candidates (JSON)
-python scripts/tvmaze_tracker.py search "Severance" --limit 5
+# Search candidates (JSON; --limit defaults to 5)
+python3 scripts/tvmaze_tracker.py search "Severance" --limit 5
 
 # Show detail + recent/upcoming episodes
-python scripts/tvmaze_tracker.py show 44933
+python3 scripts/tvmaze_tracker.py show 44933
 
 # Favorites
-python scripts/tvmaze_tracker.py list
-python scripts/tvmaze_tracker.py add 44933 --nick "Severance"
-python scripts/tvmaze_tracker.py remove 44933   # or nick / exact name
+python3 scripts/tvmaze_tracker.py list
+python3 scripts/tvmaze_tracker.py add 44933 --nick "Severance"
+python3 scripts/tvmaze_tracker.py remove 44933   # or nick / exact name
 
 # Human-facing text
-python scripts/tvmaze_tracker.py today              # episodes airing "today" in TVMAZE_TZ_OFFSET
-python scripts/tvmaze_tracker.py today --date 2026-07-31
-python scripts/tvmaze_tracker.py upcoming --days 14
+python3 scripts/tvmaze_tracker.py today              # episodes airing "today" in TVMAZE_TZ_OFFSET
+python3 scripts/tvmaze_tracker.py today --date 2026-07-31
+python3 scripts/tvmaze_tracker.py upcoming --days 14  # 14 days, today included
 
 # Cron entrypoint: print alert only if something airs; empty stdout if nothing
-python scripts/tvmaze_tracker.py check
-python scripts/tvmaze_tracker.py check --date 2026-07-31 --force
+python3 scripts/tvmaze_tracker.py check
+python3 scripts/tvmaze_tracker.py check --date 2026-07-31 --force   # dry-run: no dedupe, writes no state
 ```
+
+`--date` must be `YYYY-MM-DD`; a malformed value exits with a usage error (code 2).
 
 Copy the script into your agent’s scripts directory if the runtime requires a fixed path (e.g. Hermes `~/.hermes/scripts/`).
 
@@ -110,7 +112,7 @@ Copy the script into your agent’s scripts directory if the runtime requires a 
    - Explicit question: “Is this the one?”
 5. **Only after** explicit yes / “that one” / a chosen TVmaze id:
    ```bash
-   python scripts/tvmaze_tracker.py add SHOW_ID [--nick "Friendly name"]
+   python3 scripts/tvmaze_tracker.py add SHOW_ID [--nick "Friendly name"]
    ```
 6. Confirm with `show SHOW_ID` and mention the next known air dates (if any).
 
@@ -137,23 +139,27 @@ Is this the one you want me to track?
 Goal: notify the user **on days when at least one tracked show has an episode** (`airdate == today` in the configured timezone). Stay silent otherwise.
 
 1. Schedule a daily job (example: `0 9 * * *` local morning).
-2. Run `python scripts/tvmaze_tracker.py check`.
+2. Run `python3 scripts/tvmaze_tracker.py check` (from the skill directory, or with the script's full path).
 3. Delivery rules for agent/cron runtimes:
    - **Non-empty stdout** → send as the user message (markdown ok).
    - **Empty stdout** → do not message (no “nothing today” spam).
    - Prefer **no LLM** on the cron path when the script already formats the text (saves tokens, avoids drift).
-4. Dedupe: `check` records each `episode.id` in `alerts.json` so the same episode is not re-alerted. Use `--force` only for tests.
+4. Dedupe: `check` records each `episode.id` in `alerts.json` so the same episode is not re-alerted. `--force` is a dry-run for tests: it ignores the dedupe map and writes nothing, so it never silences the real alert.
 
 ### Sample alert output
 
 ```text
-📺 Series today — Friday 31 Jul
+TV shows today — Friday 31 Jul
 
-• **Silo** (Apple TV) — S03E05 _Memory_ · 21:00
+• **Late Night with Seth Meyers** (NBC) — S2026E111 _Guests_ · 00:35
+  https://www.tvmaze.com/episodes/...
+• **Silo** (Apple TV) — S03E05 _Memory_
   https://www.tvmaze.com/episodes/...
 
 _Source: TVmaze_
 ```
+
+The header reads `TV shows today — …` for the current local day and `TV shows on <Weekday> <D> <Mon>` when `--date` points to another day. The time is the network's local `airtime`; it is omitted when TVmaze has no `airtime` (typical for streaming drops).
 
 ### Hermes / similar agent notes
 
@@ -174,13 +180,13 @@ _Source: TVmaze_
 | List my shows | `list` |
 | Remove X | `remove` by id, nick, or name |
 | What airs today? | `today` (always prints a status line even if empty) |
-| What’s coming? | `upcoming --days N` |
-| Dry-run alert | `check --force` |
+| What’s coming? | `upcoming --days N` (N days, today included) |
+| Dry-run alert | `check --force` (prints even if already notified; writes no state) |
 
 ## Pitfalls
 
 - **Homonyms**: e.g. multiple “Silo” entries — always confirm with poster + year + network.
-- **Streaming**: `airdate` is reliable for “day it drops”; `airtime` may be null — script falls back to `airstamp` converted with `TVMAZE_TZ_OFFSET`.
+- **Streaming**: `airdate` is reliable for “day it drops”; `airtime` is often empty and then `airstamp` is just a placeholder (e.g. `12:00` UTC), so the script shows no time instead of a fake one.
 - **Missing future eps**: TVmaze may not have next-season dates yet → `upcoming` empty is normal; keep the show tracked.
 - **Specials**: default episode list omits specials; use API `specials=1` only if the user wants them (extend script if needed).
 - **Timezone**: “today” is defined by `TVMAZE_TZ_OFFSET`, not the host UTC date alone.

@@ -41,7 +41,7 @@ curl -s "https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/20123456789"
     "denominacion": "NOMBRE DE LA PERSONA",
     "periodos": [
       {
-        "periodo": "2024-12",
+        "periodo": "202609",
         "entidades": [
           {
             "entidad": "BANCO DE LA NACION ARGENTINA",
@@ -71,7 +71,7 @@ Returns debt history across multiple periods. Useful for tracking how a debtor's
 curl -s "https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/Historicas/20123456789"
 ```
 
-**Response structure:** Same as current debts but with multiple periods. Historical entries have simplified entity data (no `fechaSit1`, `diasAtrasoPago`, or observation flags).
+**Response structure:** Same as current debts but with multiple periods (roughly the last 24 months, newest first). Historical entries have simplified entity data: only `entidad`, `situacion`, `monto`, `enRevision` and `procesoJud` (no `fechaSit1`, `diasAtrasoPago`, or the other observation flags). Entities with no debt reported in a given period appear with `situacion: 0` and `monto: 0.0`.
 
 ### 3. Rejected Checks — `GET /centraldedeudores/v1.0/Deudas/ChequesRechazados/{Identificacion}`
 
@@ -120,6 +120,7 @@ curl -s "https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/ChequesRechazados
 
 | Code | Commercial Portfolio | Consumer/Housing Portfolio |
 |------|---------------------|--------------------------|
+| 0 | No debt / not reported for that period (seen in historical data, with `monto: 0.0`) | No debt / not reported for that period |
 | 1 | Normal | Normal |
 | 2 | Special follow-up (seguimiento especial) | Low risk (riesgo bajo) |
 | 3 | Problematic (con problemas) | Medium risk (riesgo medio) |
@@ -127,12 +128,12 @@ curl -s "https://api.bcra.gob.ar/centraldedeudores/v1.0/Deudas/ChequesRechazados
 | 5 | Irrecoverable (irrecuperable) | Irrecoverable (irrecuperable) |
 | 6 | Irrecoverable by technical disposition | Irrecoverable by technical disposition |
 
-**Situacion 1** is the best status. Any value >= 2 indicates some level of credit risk. Values >= 5 are severe.
+**Situacion 1** is the best status for an active debt. Any value >= 2 indicates some level of credit risk. Values >= 5 are severe. **Situacion 0** is not a risk classification: it means there was no debt reported at that entity in that period — ignore it (or show it as "sin deuda") when computing trends.
 
 ## Key Field Notes
 
 - **monto**: Reported in thousands of ARS (miles de pesos)
-- **periodo**: Format `YYYY-MM` (the last reported period)
+- **periodo**: Format `YYYYMM` as a string (e.g. `"202609"`). `/Deudas` can return more than one period (e.g. `202609` and `202608` when some entity has not reported the latest month yet); periods come newest first, so use `periodos[0]` for the latest one (but still list entities that only appear in an older period — their latest report is that one)
 - **fechaSit1**: Date when the debtor was first classified as Situacion 1 at that entity
 - **diasAtrasoPago**: Days past due (0 means current)
 - **refinanciaciones**: `true` if debt has been refinanced

@@ -31,7 +31,7 @@ prototipado, open source, pruebas, educación y experimentación.
 - `/simple/price` — precios simples
 - `/coins/markets` — lista con market cap, volumen, etc.
 - `/coins/{id}` — detalle de una moneda
-- `/coins/{id}/market_chart` — histórico (hasta ~1 año en muchos casos)
+- `/coins/{id}/market_chart` — histórico, limitado a los últimos **365 días** (`days=365` ok; `days=366`, `400` o `max` → HTTP 401 con `error_code` 10012)
 - `/coins/{id}/ohlc` — OHLC
 - `/search/trending` — tendencias
 - `/global` — estadísticas globales
@@ -77,7 +77,7 @@ curl -s "https://api.geckoterminal.com/api/v2/networks/eth/tokens/multi/0xdac17f
 
 - [Keyless Public API - CoinGecko](https://docs.coingecko.com/docs/keyless-public-api)
 - [Demo Endpoint Overview](https://docs.coingecko.com/demo/reference/endpoint-overview)
-- [GeckoTerminal DEX API](https://www.geckoterminal.com/dex-api)
+- [GeckoTerminal API Docs (Swagger)](https://api.geckoterminal.com/docs/index.html)
 
 ## 2. CoinMarketCap Keyless Public API
 
@@ -100,12 +100,13 @@ Ambos caminos viven en `pro-api.coinmarketcap.com`:
 
 **Standard API (ejemplos):**
 
+- `/v1/simple/price` (ej. `?ids=1,1027&convert=USD`)
 - `/v1/cryptocurrency/map`
 - `/v3/cryptocurrency/listings/latest`
 - `/v3/cryptocurrency/quotes/latest`
 - `/v2/cryptocurrency/info`
 - `/v1/global-metrics/quotes/latest`
-- `/v2/tools/price-conversion`
+- `/v2/tools/price-conversion` (un solo `convert` por request; preferir `id` sobre `symbol`)
 - `/v1/cryptocurrency/categories`
 - `/v3/fear-and-greed/latest` y `/historical`
 - Índices CMC100 / CMC20 (latest + historical)
@@ -126,7 +127,9 @@ curl -s "https://pro-api.coinmarketcap.com/public-api/v3/cryptocurrency/listings
 
 curl -s "https://pro-api.coinmarketcap.com/public-api/v3/fear-and-greed/latest" | jq '.'
 
-curl -s "https://pro-api.coinmarketcap.com/public-api/v2/tools/price-conversion?amount=100&symbol=BTC&convert=USD,ARS" | jq '.'
+# price-conversion: un solo `convert` por request en keyless (`convert=USD,ARS` → 400 "limited to 1 convert options").
+# Usar `id` (1 = BTC): `symbol=BTC` matchea varias monedas y devuelve un array.
+curl -s "https://pro-api.coinmarketcap.com/public-api/v2/tools/price-conversion?amount=100&id=1&convert=ARS" | jq '.'
 ```
 
 ### Limitaciones Keyless CMC
@@ -147,7 +150,7 @@ curl -s "https://pro-api.coinmarketcap.com/public-api/v2/tools/price-conversion?
 |----------------|-------------------|------------------------|----------------------|
 | Facilidad | Excelente (sin nada) | Buena (`/public-api`) | CoinGecko |
 | Cantidad de endpoints | 50+ + 20 onchain | ~18 Standard + 17 DEX | CoinGecko |
-| Histórico keyless | Bueno (~1 año en muchos casos) | Limitado | CoinGecko |
+| Histórico keyless | Bueno (últimos 365 días como máximo) | Limitado | CoinGecko |
 | Onchain / DEX | Excelente (GeckoTerminal) | Bueno | CoinGecko |
 | Rate limit | ~10–30/min | Más agresivo | CoinGecko |
 | Consistencia de respuesta | Muy buena | Excelente (mismo formato keyed) | CMC |

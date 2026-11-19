@@ -56,7 +56,7 @@ Regla práctica: CoinGecko para precios/histórico; CMC para rankings/índices/F
 - `GET /simple/price`
 - `GET /coins/markets`
 - `GET /coins/{id}`
-- `GET /coins/{id}/market_chart`
+- `GET /coins/{id}/market_chart` (keyless: máximo últimos 365 días)
 - `GET /coins/{id}/ohlc`
 - `GET /coins/{id}/tickers` — mercados individuales donde CoinGecko detecta el coin (exchange/DEX, volumen, spread, `is_stale`, `is_anomaly`, `last_traded_at`). Es el endpoint para responder "¿qué mercados conoce CoinGecko de este token?" o para cruzar contra datos onchain (ver GeckoTerminal abajo) y detectar pools que CoinGecko todavía no lista.
 - `GET /search/trending`
@@ -100,6 +100,7 @@ curl -s "https://api.geckoterminal.com/api/v2/networks/eth/tokens/multi/0xdac17f
 Prefijo obligatorio: `/public-api` antes del path del endpoint.
 Solo `GET`. No enviar header de API key.
 
+- `GET /public-api/v1/simple/price` (ej. `?ids=1,1027&convert=USD`)
 - `GET /public-api/v1/cryptocurrency/map`
 - `GET /public-api/v3/cryptocurrency/listings/latest`
 - `GET /public-api/v3/cryptocurrency/quotes/latest`
@@ -122,7 +123,9 @@ curl -s "https://pro-api.coinmarketcap.com/public-api/v3/cryptocurrency/listings
 
 curl -s "https://pro-api.coinmarketcap.com/public-api/v3/fear-and-greed/latest" | jq '.'
 
-curl -s "https://pro-api.coinmarketcap.com/public-api/v2/tools/price-conversion?amount=100&symbol=BTC&convert=USD,ARS" | jq '.'
+# price-conversion: un solo `convert` por request en keyless (`convert=USD,ARS` → 400 "limited to 1 convert options").
+# Usar `id` (1 = BTC): `symbol=BTC` matchea varias monedas y devuelve un array.
+curl -s "https://pro-api.coinmarketcap.com/public-api/v2/tools/price-conversion?amount=100&id=1&convert=ARS" | jq '.'
 ```
 
 ## Workflow
