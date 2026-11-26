@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <rect x="0" y="0" width="48" height="48" rx="12" fill="#18181b"/>
+  <path d="M14 32V16h8l6 10 6-10h8v16h-6V22l-6 10h-4l-6-10v10h-6z" fill="#fafafa"/>
+  <text x="60" y="32" font-family="system-ui,sans-serif" font-size="20" font-weight="600" fill="#18181b">Acme</text>
+</svg>

@@ -1,0 +1,24 @@
+{
+  "name": "feature-video-remotion",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Remotion scaffold for feature-video skill",
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio",
+    "render:example": "remotion render ExampleFeature out/example.mp4",
+    "still": "remotion still ExampleFeature out/example-poster.png --frame=45",
+    "qa": "node scripts/contact-sheet.mjs"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.547",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "^4.0.547"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.3",
+    "playwright": "^1.63.0",
+    "typescript": "^5.9.3"
+  }
+}
