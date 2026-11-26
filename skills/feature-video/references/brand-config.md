@@ -1,6 +1,6 @@
 # Brand config reference
 
-`brand.config.ts` is the only place project-specific brand values should live. Components under `src/brand/` read from it; do not hard-code palette names, font families, or URLs in compositions.
+`src/brand.config.ts` (in the Remotion scaffold) is the only place project-specific brand values should live. Components under `src/brand/` read from it; do not hard-code palette names, font families, or URLs in compositions.
 
 ## Discovering values
 

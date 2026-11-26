@@ -24,7 +24,14 @@ export function scrollTo(loc, offset = 24) {
   return loc.first().evaluate((el, off) => {
     let p = el.parentElement;
     while (p && !(p.scrollHeight > p.clientHeight + 4 && /(auto|scroll)/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
-    (p ?? document.scrollingElement).scrollTop += el.getBoundingClientRect().top - off;
+    const elTop = el.getBoundingClientRect().top;
+    if (!p) {
+      const root = document.scrollingElement ?? document.documentElement;
+      root.scrollTop += elTop - off;
+      return;
+    }
+    const containerTop = p.getBoundingClientRect().top;
+    p.scrollTop = elTop - containerTop + p.scrollTop - off;
   }, offset);
 }
 

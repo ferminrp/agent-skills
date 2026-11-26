@@ -11,12 +11,12 @@ The method, in one line: **brief → storyboard → real captures → compositio
 
 ## Brand config (fill per project)
 
-Before capture or composition, create or update `brand.config.ts` at the scaffold root (see `references/brand-config.md` and `assets/remotion-scaffold/src/brand.config.ts`).
+Before capture or composition, create or update `src/brand.config.ts` in the Remotion scaffold (see `references/brand-config.md` and `assets/remotion-scaffold/src/brand.config.ts`).
 
 Derive values from the project’s design system, tokens, or brand docs when they exist. Ask the user only for what you cannot find:
 
 - **Colors** — neutral scale for backgrounds and type (no hard-coded third-party palette names in code).
-- **Fonts** — sans for titles/body, mono for step labels; local font files under `public/fonts/` and entries in `brand.config.ts` (do not rely on live Google Fonts in render).
+- **Fonts** — sans for titles/body, mono for step labels; local font files under `public/fonts/` and entries in `src/brand.config.ts` (do not rely on live Google Fonts in render).
 - **Logos** — SVG paths for icon and lockup, light and dark ink variants.
 - **Product URLs** — default host shown in `BrowserFrame`, marketing URL on the closing card, tagline or closing line.
 - **Copy** — locale, tone-of-voice rules, and how demo personas should read for the target market (realistic names and emails; no real customer data).
@@ -41,7 +41,7 @@ Write a shot list and show it to the user before you write any code:
 | … | | | | |
 | n | — | Closing | Logo + tagline + product URL | 4 |
 
-Caption rules (apply the project’s tone from `brand.config.ts`):
+Caption rules (apply the project’s tone from `src/brand.config.ts`):
 
 - Title = **benefit or outcome**, not the click (“Responses arrive on their own”, not “Click Leads”).
 - Body: one sentence, about 20 words max, readable in the time the scene is on screen.
@@ -51,7 +51,7 @@ Caption rules (apply the project’s tone from `brand.config.ts`):
 ## 3. Real captures with demo data
 
 1. Run the app locally per its dev/verify docs. Use **local-only** data stores; never production or remote databases unless the user explicitly requires it.
-2. Seed **fictitious, coherent** demo data with a configurable prefix (default `video-demo-` in `brand.config.ts`). Use realistic names and emails for the target market. No real clients. Fix values that would look wrong on screen (implausible numbers, broken date math).
+2. Seed **fictitious, coherent** demo data with a configurable prefix (default `video-demo-` in `src/brand.config.ts`). Use realistic names and emails for the target market. No real clients. Fix values that would look wrong on screen (implausible numbers, broken date math).
 3. Capture with Playwright using `scripts/lib/capture.mjs`:
    - `loginAuthenticated({ ... })` — implement project-specific auth in `scripts/lib/login.mjs` (magic link, test user, or session cookie). The scaffold ships a stub; copy and adapt it.
    - `openPublic(DESKTOP | MOBILE)` for unauthenticated surfaces.
@@ -132,7 +132,7 @@ Review the contact sheet **and** full-size frames at each zoom (`ffmpeg -ss <t> 
 - [ ] Every scene matches its caption: relevant values visible, not a collapsed list or half-cut panel.
 - [ ] Headings and key values are not clipped. Cursor lands on the real control.
 - [ ] Demo data is coherent across screens. No error toasts or debug chrome left in captures.
-- [ ] Brand checklist from `brand.config.ts`: fonts, neutral palette, logo polarity, tone rules.
+- [ ] Brand checklist from `src/brand.config.ts`: fonts, neutral palette, logo polarity, tone rules.
 - [ ] Nothing shown that does not exist in the product.
 
 ## 6. Deliver and save
